@@ -66,3 +66,8 @@ export type Verification = Prisma.VerificationModel
  * 
  */
 export type project = Prisma.projectModel
+/**
+ * Model stack
+ * 
+ */
+export type stack = Prisma.stackModel

@@ -80,6 +80,14 @@ model project {
   title       String
   description String
   imageUrl    String
+  category    String   @default("web")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model stack {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -388,7 +388,8 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
-  project: 'project'
+  project: 'project',
+  stack: 'stack'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +405,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "project"
+    modelProps: "user" | "session" | "account" | "verification" | "project" | "stack"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -778,6 +779,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    stack: {
+      payload: Prisma.$stackPayload<ExtArgs>
+      fields: Prisma.stackFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.stackFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.stackFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+        }
+        findFirst: {
+          args: Prisma.stackFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.stackFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+        }
+        findMany: {
+          args: Prisma.stackFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>[]
+        }
+        create: {
+          args: Prisma.stackCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+        }
+        createMany: {
+          args: Prisma.stackCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.stackCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>[]
+        }
+        delete: {
+          args: Prisma.stackDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+        }
+        update: {
+          args: Prisma.stackUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+        }
+        deleteMany: {
+          args: Prisma.stackDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.stackUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.stackUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>[]
+        }
+        upsert: {
+          args: Prisma.stackUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+        }
+        aggregate: {
+          args: Prisma.StackAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStack>
+        }
+        groupBy: {
+          args: Prisma.stackGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StackGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.stackCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StackCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -880,11 +955,22 @@ export const ProjectScalarFieldEnum = {
   title: 'title',
   description: 'description',
   imageUrl: 'imageUrl',
+  category: 'category',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const StackScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StackScalarFieldEnum = (typeof StackScalarFieldEnum)[keyof typeof StackScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1065,6 +1151,7 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
   project?: Prisma.projectOmit
+  stack?: Prisma.stackOmit
 }
 
 /* Types for Logging */
