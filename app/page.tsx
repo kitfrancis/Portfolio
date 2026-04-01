@@ -13,9 +13,22 @@ import prisma from "@/lib/db";
 import { toast } from "sonner";
 import LoginPopover from "./components/LoginPopover";
 
+
 export default async function Home() {
-  
-  
+
+  const frontendStacks = await prisma.frontendStack.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    
+  })
+
+  const backendStacks = await prisma.backendStack.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  })
+
 
   const projects = await prisma.project.findMany({
     orderBy: {
@@ -51,36 +64,38 @@ export default async function Home() {
             
 
               <div className="max-w-full mx-auto py-5 p-6">
-                <h1 className="font-bold sm:text-3xl text-2xl my-8 md:my-10 ">Tech Stack</h1>
+                <h1 className="font-bold sm:text-3xl text-2xl my-8 md:my-10 ">{"<Tech Stack/>"}</h1>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <div className="flex flex-col gap-4">
-                    <h1 className="font-semibold sm:text-2xl text-xl mb-4 ">Frontend</h1>
+                    <h1 className="font-semibold sm:text-2xl text-xl mb-4 ">{"<Frontend>"}</h1>
                     <div className="flex flex-wrap gap-4">
-                     <Badge variant="outline"  className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">React</Badge>
                   
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">React</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">Nextjs</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">Tailwind CSS</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">TypeScript</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">React(Vite)</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">React(Native)</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">HTML</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">CSS</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">Javascript</Badge>
-
+                      {frontendStacks.length > 0 ? (
+                  frontendStacks.map((frontend) => (
+                    <Badge key={frontend.id} variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs lg:text-sm">{frontend.name}</Badge>
+                  ))
+                ) : (
+                  <div className="text-center col-span-full flex flex-col items-center justify-center gap-2">
+                      <h1 className="text-lg ">No frontend knowledge</h1>
+                      <p className="text-gray-400">Learn more about frontend technologies.</p>
+                  </div>
+                )}
                     </div>
                   </div>
                   <div className="flex flex-col gap-4">
-                    <h1 className="font-semibold sm:text-2xl text-xl mb-4 ">Backend & Database</h1>
-                    <div className="flex flex-wrap gap-4">
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">Nodejs</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">Express</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">Prisma</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">MongoDB</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">MySQL</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">PostgreSQL</Badge>
-                      <Badge variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs">Convex</Badge>
-
+                    <h1 className="font-medium sm:text-2xl text-xl mb-4 ">{"</Backend & Database>"}</h1>
+                    <div className="flex flex-wrap gap-4 mb-10">
+                      {backendStacks.length > 0 ? (
+                  backendStacks.map((backend) => (
+                    <Badge key={backend.id} variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs lg:text-sm">{backend.name}</Badge>
+                  ))
+                ) : (
+                  <div className="text-center col-span-full flex flex-col items-center justify-center gap-2">
+                      <h1 className="text-lg ">No backend knowledge</h1>
+                      <p className="text-gray-400">Learn more about backend and database technologies.</p>
+                  </div>
+                )}
 
 
 
@@ -121,7 +136,10 @@ export default async function Home() {
                     </Card>
                   ))
                 ) : (
-                  <p className="text-center text-gray-500 col-span-full">No projects found.</p>
+                  <div className="text-center col-span-full flex flex-col items-center justify-center gap-2">
+                      <h1 className="text-lg ">No projects created yet.</h1>
+                      <p className="text-gray-400">Add some projects to see them here.</p>
+                  </div>
                 )}
               </div>
 

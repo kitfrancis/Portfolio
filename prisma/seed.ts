@@ -2,11 +2,30 @@ import prisma from "@/lib/db";
 
 async function main() {
 
-    const stacks = [
-        { name: "Next.js" },
+    const frontendStacks = [
         { name: "React" },
+        { name: "Nextjs" },
+        { name: "Tailwind CSS" },
+        { name: "TypeScript" },
+        { name: "React(Vite)" },
+        { name: "React(Native)" },
+        { name: "HTML" },
+        { name: "CSS" },
+        { name: "JavaScript" },
+
     ];
 
+    const backendStacks = [
+        { name: "Node.js" },
+        { name: "Express" },
+        { name: "Prisma" },
+        { name: "PostgreSQL" },
+        { name: "MongoDB" },
+        { name: "MySQL" },
+        { name: "Convex" },
+    ];
+
+    
     const projects = [
     {
       title: "E-Capstone: System Management of the University of Antique",
@@ -29,11 +48,20 @@ async function main() {
     }
     console.log("Seeding completed successfully.");
 
-    for (const stack of stacks) {
-        await prisma.stack.create({
-            data: stack,
-        });
-    }
+    await prisma.frontendStack.createMany({
+  data: frontendStacks,
+  skipDuplicates: true,
+});
+    console.log("Frontend stacks seeding completed successfully.");
+
+    await prisma.backendStack.createMany({
+  data: backendStacks,
+  skipDuplicates: true,
+});
+    console.log("Backend stacks seeding completed successfully.");
+
+
+   
 
 }
 

@@ -56,7 +56,8 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   project: 'project',
-  stack: 'stack'
+  frontendStack: 'frontendStack',
+  backendStack: 'backendStack'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -146,14 +147,24 @@ export const ProjectScalarFieldEnum = {
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
-export const StackScalarFieldEnum = {
+export const FrontendStackScalarFieldEnum = {
   id: 'id',
   name: 'name',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type StackScalarFieldEnum = (typeof StackScalarFieldEnum)[keyof typeof StackScalarFieldEnum]
+export type FrontendStackScalarFieldEnum = (typeof FrontendStackScalarFieldEnum)[keyof typeof FrontendStackScalarFieldEnum]
+
+
+export const BackendStackScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BackendStackScalarFieldEnum = (typeof BackendStackScalarFieldEnum)[keyof typeof BackendStackScalarFieldEnum]
 
 
 export const SortOrder = {

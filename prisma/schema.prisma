@@ -85,7 +85,14 @@ model project {
   updatedAt   DateTime @updatedAt
 }
 
-model stack {
+model frontendStack {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model backendStack {
   id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())

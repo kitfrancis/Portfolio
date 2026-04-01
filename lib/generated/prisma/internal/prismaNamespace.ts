@@ -389,7 +389,8 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   project: 'project',
-  stack: 'stack'
+  frontendStack: 'frontendStack',
+  backendStack: 'backendStack'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "project" | "stack"
+    modelProps: "user" | "session" | "account" | "verification" | "project" | "frontendStack" | "backendStack"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -779,77 +780,151 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    stack: {
-      payload: Prisma.$stackPayload<ExtArgs>
-      fields: Prisma.stackFieldRefs
+    frontendStack: {
+      payload: Prisma.$frontendStackPayload<ExtArgs>
+      fields: Prisma.frontendStackFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.stackFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload> | null
+          args: Prisma.frontendStackFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.stackFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+          args: Prisma.frontendStackFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload>
         }
         findFirst: {
-          args: Prisma.stackFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload> | null
+          args: Prisma.frontendStackFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.stackFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+          args: Prisma.frontendStackFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload>
         }
         findMany: {
-          args: Prisma.stackFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>[]
+          args: Prisma.frontendStackFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload>[]
         }
         create: {
-          args: Prisma.stackCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+          args: Prisma.frontendStackCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload>
         }
         createMany: {
-          args: Prisma.stackCreateManyArgs<ExtArgs>
+          args: Prisma.frontendStackCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.stackCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>[]
+          args: Prisma.frontendStackCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload>[]
         }
         delete: {
-          args: Prisma.stackDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+          args: Prisma.frontendStackDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload>
         }
         update: {
-          args: Prisma.stackUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+          args: Prisma.frontendStackUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload>
         }
         deleteMany: {
-          args: Prisma.stackDeleteManyArgs<ExtArgs>
+          args: Prisma.frontendStackDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.stackUpdateManyArgs<ExtArgs>
+          args: Prisma.frontendStackUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.stackUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>[]
+          args: Prisma.frontendStackUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload>[]
         }
         upsert: {
-          args: Prisma.stackUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$stackPayload>
+          args: Prisma.frontendStackUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$frontendStackPayload>
         }
         aggregate: {
-          args: Prisma.StackAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateStack>
+          args: Prisma.FrontendStackAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFrontendStack>
         }
         groupBy: {
-          args: Prisma.stackGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.StackGroupByOutputType>[]
+          args: Prisma.frontendStackGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FrontendStackGroupByOutputType>[]
         }
         count: {
-          args: Prisma.stackCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.StackCountAggregateOutputType> | number
+          args: Prisma.frontendStackCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FrontendStackCountAggregateOutputType> | number
+        }
+      }
+    }
+    backendStack: {
+      payload: Prisma.$backendStackPayload<ExtArgs>
+      fields: Prisma.backendStackFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.backendStackFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.backendStackFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload>
+        }
+        findFirst: {
+          args: Prisma.backendStackFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.backendStackFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload>
+        }
+        findMany: {
+          args: Prisma.backendStackFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload>[]
+        }
+        create: {
+          args: Prisma.backendStackCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload>
+        }
+        createMany: {
+          args: Prisma.backendStackCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.backendStackCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload>[]
+        }
+        delete: {
+          args: Prisma.backendStackDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload>
+        }
+        update: {
+          args: Prisma.backendStackUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload>
+        }
+        deleteMany: {
+          args: Prisma.backendStackDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.backendStackUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.backendStackUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload>[]
+        }
+        upsert: {
+          args: Prisma.backendStackUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$backendStackPayload>
+        }
+        aggregate: {
+          args: Prisma.BackendStackAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBackendStack>
+        }
+        groupBy: {
+          args: Prisma.backendStackGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BackendStackGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.backendStackCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BackendStackCountAggregateOutputType> | number
         }
       }
     }
@@ -963,14 +1038,24 @@ export const ProjectScalarFieldEnum = {
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
-export const StackScalarFieldEnum = {
+export const FrontendStackScalarFieldEnum = {
   id: 'id',
   name: 'name',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type StackScalarFieldEnum = (typeof StackScalarFieldEnum)[keyof typeof StackScalarFieldEnum]
+export type FrontendStackScalarFieldEnum = (typeof FrontendStackScalarFieldEnum)[keyof typeof FrontendStackScalarFieldEnum]
+
+
+export const BackendStackScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BackendStackScalarFieldEnum = (typeof BackendStackScalarFieldEnum)[keyof typeof BackendStackScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1151,7 +1236,8 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
   project?: Prisma.projectOmit
-  stack?: Prisma.stackOmit
+  frontendStack?: Prisma.frontendStackOmit
+  backendStack?: Prisma.backendStackOmit
 }
 
 /* Types for Logging */
