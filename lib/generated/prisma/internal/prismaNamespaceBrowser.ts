@@ -57,7 +57,8 @@ export const ModelName = {
   Verification: 'Verification',
   project: 'project',
   frontendStack: 'frontendStack',
-  backendStack: 'backendStack'
+  backendStack: 'backendStack',
+  Bio: 'Bio'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -165,6 +166,18 @@ export const BackendStackScalarFieldEnum = {
 } as const
 
 export type BackendStackScalarFieldEnum = (typeof BackendStackScalarFieldEnum)[keyof typeof BackendStackScalarFieldEnum]
+
+
+export const BioScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  bio: 'bio',
+  imageUrl: 'imageUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BioScalarFieldEnum = (typeof BioScalarFieldEnum)[keyof typeof BioScalarFieldEnum]
 
 
 export const SortOrder = {

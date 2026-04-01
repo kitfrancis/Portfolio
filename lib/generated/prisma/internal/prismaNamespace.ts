@@ -390,7 +390,8 @@ export const ModelName = {
   Verification: 'Verification',
   project: 'project',
   frontendStack: 'frontendStack',
-  backendStack: 'backendStack'
+  backendStack: 'backendStack',
+  Bio: 'Bio'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -406,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "project" | "frontendStack" | "backendStack"
+    modelProps: "user" | "session" | "account" | "verification" | "project" | "frontendStack" | "backendStack" | "bio"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -928,6 +929,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Bio: {
+      payload: Prisma.$BioPayload<ExtArgs>
+      fields: Prisma.BioFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BioFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BioFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload>
+        }
+        findFirst: {
+          args: Prisma.BioFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BioFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload>
+        }
+        findMany: {
+          args: Prisma.BioFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload>[]
+        }
+        create: {
+          args: Prisma.BioCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload>
+        }
+        createMany: {
+          args: Prisma.BioCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BioCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload>[]
+        }
+        delete: {
+          args: Prisma.BioDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload>
+        }
+        update: {
+          args: Prisma.BioUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload>
+        }
+        deleteMany: {
+          args: Prisma.BioDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BioUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BioUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload>[]
+        }
+        upsert: {
+          args: Prisma.BioUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BioPayload>
+        }
+        aggregate: {
+          args: Prisma.BioAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBio>
+        }
+        groupBy: {
+          args: Prisma.BioGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BioGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BioCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BioCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1056,6 +1131,18 @@ export const BackendStackScalarFieldEnum = {
 } as const
 
 export type BackendStackScalarFieldEnum = (typeof BackendStackScalarFieldEnum)[keyof typeof BackendStackScalarFieldEnum]
+
+
+export const BioScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  bio: 'bio',
+  imageUrl: 'imageUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BioScalarFieldEnum = (typeof BioScalarFieldEnum)[keyof typeof BioScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1238,6 +1325,7 @@ export type GlobalOmitConfig = {
   project?: Prisma.projectOmit
   frontendStack?: Prisma.frontendStackOmit
   backendStack?: Prisma.backendStackOmit
+  bio?: Prisma.BioOmit
 }
 
 /* Types for Logging */

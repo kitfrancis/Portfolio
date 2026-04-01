@@ -2,6 +2,20 @@ import prisma from "@/lib/db";
 
 async function main() {
 
+    const bio = await prisma.bio.findFirst();
+
+    if (!bio) {     
+        await prisma.bio.create({
+            data: {
+                name: "Kit Francis Besa",
+                bio: "Hi I'm Kit Francis Besa, a passionate and dedicated software developer with a strong background in web and mobile application development. With a keen eye for detail and a commitment to writing clean, efficient code, I strive to create innovative solutions that not only meet but exceed client expectations. My expertise spans across various technologies, including React, Next.js, Node.js, and Prisma, allowing me to build robust and scalable applications. I am constantly seeking new challenges and opportunities to grow as a developer while contributing to impactful projects."
+            }
+        });
+        console.log("Bio seeded successfully.");
+    } else {
+        console.log("Bio already exists. Skipping seeding.");
+    }
+
     const frontendStacks = [
         { name: "React" },
         { name: "Nextjs" },

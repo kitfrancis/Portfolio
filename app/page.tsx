@@ -12,9 +12,20 @@ import Link from "next/link";
 import prisma from "@/lib/db";
 import { toast } from "sonner";
 import LoginPopover from "./components/LoginPopover";
+import EditableHero from "./components/editableHero";
+
+export const revalidate = 0;
 
 
 export default async function Home() {
+
+  const bio = await prisma.bio.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  
 
   const frontendStacks = await prisma.frontendStack.findMany({
     orderBy: {
@@ -43,8 +54,8 @@ export default async function Home() {
           <div className="max-w-full mx-auto py-5 p-6 ">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h1 className=" text-2xl font-bold sm:text-3xl">Hi,  I&apos;m Kit Francis Besa</h1>
-                  <p className="py-5 sm:py-6 text-sm sm:text-lg  ">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium asperiores repellendus nam dicta ut sint tempora distinctio, architecto hic perferendis minima aliquid a maiores nulla?</p>
+                  
+                 <EditableHero name="Kit Francis Besa" bio="Kit Francis Besa"/>                
                   <div className="flex gap-4 items-center justify-center lg:justify-start">
                     <Button className="" asChild>
                       <Link className=" hover:bg-primary/90" href="/projects">View Projects</Link>

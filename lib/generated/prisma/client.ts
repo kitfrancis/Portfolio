@@ -76,3 +76,8 @@ export type frontendStack = Prisma.frontendStackModel
  * 
  */
 export type backendStack = Prisma.backendStackModel
+/**
+ * Model Bio
+ * 
+ */
+export type Bio = Prisma.BioModel
