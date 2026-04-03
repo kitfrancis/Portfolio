@@ -150,15 +150,19 @@ export default function EditableHero({ bio, name: initialName }: { bio: string, 
     router.refresh();
   };
 
-  if (!session) return null;
+  if (!session) {
+      <div className="">
+        <h1 className=" text-2xl font-bold sm:text-3xl">Hi I'm {name}</h1>
+         <p className="py-5 sm:py-6 text-sm sm:text-lg "> {bioText}</p>
+       </div>
+  }
 
   return (
     <>
-        <div className="">
-                    <h1 className=" text-2xl font-bold sm:text-3xl">Hi I'm {name}</h1>
-                    <p className="py-5 sm:py-6 text-sm sm:text-lg "> {bioText}</p>
-                </div>
-    
+      <div>
+      <h1 className="text-2xl font-bold sm:text-3xl">Hi I'm {name}</h1>
+      <p className="py-5 sm:py-6 text-sm sm:text-lg">{bioText}</p>
+    </div>
     {session && (
         <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
