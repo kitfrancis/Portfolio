@@ -74,7 +74,7 @@ export default function navbar(){
             </button>
 
             <div className="flex items-center space-x-4 pr-8">
-              <h1 className="mr-5 text-2xl text-gray-600 font-bold">Portfolio</h1>
+              <h1 className="mr-5 text-2xl text-gray-700 dark:text-gray-100 font-bold">Portfolio</h1>
               <div className="flex gap-2">
                 <img className="h-8 w-8 rounded-full hover:scale-125 transition duration-200 ease-in-out" src="/images/Ua.png" alt="University of Antique Logo" />
                 <img className="h-8 w-8 rounded-full hover:scale-125 transition duration-200 ease-in-out" src="/images/CCS.png" alt="CCS Logo" />

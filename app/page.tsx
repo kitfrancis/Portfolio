@@ -74,10 +74,10 @@ export default async function Home() {
              
             
 
-              <div className="max-w-full mx-auto py-5 p-6">
-                <h1 className="font-bold sm:text-3xl text-2xl my-8 md:my-10 ">{"<Tech Stack/>"}</h1>
+              <div className="max-w-full mx-auto  py-6">
+                <h1 className="font-bold sm:text-3xl text-2xl my-8 md:my-10 ">{"Tech Stack"}</h1>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-30">
                   <div className="flex flex-col gap-4">
                     <h1 className="font-semibold sm:text-2xl text-xl mb-4 ">{"<Frontend>"}</h1>
                     <div className="flex flex-wrap gap-4">
