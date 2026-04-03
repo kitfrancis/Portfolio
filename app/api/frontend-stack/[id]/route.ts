@@ -1,7 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/db";
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
-  await prisma.frontendStack.delete({ where: { id: params.id } });
-  return NextResponse.json({ success: true });
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    await prisma.frontendStack.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to delete item" }, { status: 500 });
+  }
 }
