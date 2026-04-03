@@ -74,7 +74,7 @@ export default async function Home() {
              
             
 
-              <div className="max-w-full mx-auto  py-6">
+              <div className="max-w-full mx-auto lg:px-6 px-0 py-6">
                 <h1 className="font-bold sm:text-3xl text-2xl my-8 md:my-10 ">{"Tech Stack"}</h1>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-30">
