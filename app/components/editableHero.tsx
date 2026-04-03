@@ -170,7 +170,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string, 
           ✏️
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[80vh]  ">
         <DialogHeader>
           <DialogTitle>Edit Portfolio</DialogTitle>
         </DialogHeader>
@@ -218,7 +218,6 @@ export default function EditableHero({ bio, name: initialName }: { bio: string, 
             <Button onClick={saveBio}>Save Image</Button>
           </TabsContent>
 
-          {/* ── Tech Stack Tab ── */}
           <TabsContent value="stack" className="flex flex-col gap-4 mt-4">
             <div>
               <p className="font-semibold text-sm mb-2">Frontend</p>
@@ -279,7 +278,6 @@ export default function EditableHero({ bio, name: initialName }: { bio: string, 
             </div>
           </TabsContent>
 
-          {/* ── Projects Tab ── */}
           <TabsContent value="projects" className="flex flex-col gap-4 mt-4">
             <p className="font-semibold text-sm">Add New Project</p>
             <input

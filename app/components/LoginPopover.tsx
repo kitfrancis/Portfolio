@@ -22,7 +22,7 @@ export default function LoginPopover() {
     if (error) {
       toast.error(error.message || "Login failed!");
     } else {
-      toast.success("Welcome back, Kit! 👋");
+      toast.success("Welcome back, Master 👋");
     }
     setLoading(false);
   };
@@ -32,7 +32,6 @@ export default function LoginPopover() {
     toast.success("Logged out!");
   };
 
-  // ✅ Already logged in
   if (session) {
     return (
       <Button
@@ -45,7 +44,6 @@ export default function LoginPopover() {
     );
   }
 
-  // 🔒 Not logged in — show login popover
   return (
     <Popover>
       <PopoverTrigger asChild>
