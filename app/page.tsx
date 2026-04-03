@@ -84,7 +84,7 @@ export default async function Home() {
                   
                       {frontendStacks.length > 0 ? (
                   frontendStacks.map((frontend) => (
-                    <Badge key={frontend.id} variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs lg:text-sm">{frontend.name}</Badge>
+                    <Badge key={frontend.id} variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-sm">{frontend.name}</Badge>
                   ))
                 ) : (
                   <div className="text-center col-span-full flex flex-col items-center justify-center gap-2">
@@ -99,7 +99,7 @@ export default async function Home() {
                     <div className="flex flex-wrap gap-4 mb-10">
                       {backendStacks.length > 0 ? (
                   backendStacks.map((backend) => (
-                    <Badge key={backend.id} variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-xs lg:text-sm">{backend.name}</Badge>
+                    <Badge key={backend.id} variant="outline" className="text-md px-2 py-3 rounded-xl bg-background text-foreground text-sm">{backend.name}</Badge>
                   ))
                 ) : (
                   <div className="text-center col-span-full flex flex-col items-center justify-center gap-2">
