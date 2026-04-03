@@ -152,8 +152,8 @@ export default function EditableHero({ bio, name: initialName }: { bio: string, 
 
   if (!session) {
       <div className="">
-        <h1 className=" text-2xl font-bold sm:text-3xl">Hi I'm {name}</h1>
-         <p className="py-5 sm:py-6 text-sm sm:text-lg "> {bioText}</p>
+        <h1 className=" text-2xl font-bold  sm:text-3xl">Hi I'm {name}</h1>
+         <p className="py-5 sm:py-6 text-sm text-gray-700 sm:text-lg "> {bioText}</p>
        </div>
   }
 
@@ -161,7 +161,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string, 
     <>
       <div>
       <h1 className="text-2xl font-bold sm:text-3xl">Hi I'm {name}</h1>
-      <p className="py-5 sm:py-6 text-sm sm:text-lg">{bioText}</p>
+      <p className="py-5 sm:py-6 text-sm text-gray-700 dark:text-gray-400 sm:text-lg">{bioText}</p>
     </div>
     {session && (
         <Dialog open={open} onOpenChange={setOpen}>
