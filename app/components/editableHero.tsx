@@ -196,7 +196,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     <>
       <div>
         <h1 className="text-2xl font-bold sm:text-3xl text-slate-800 dark:text-slate-100">
-          Hi, I'm {name}
+          Hi, I'm <span className="text-cyan-500">{name}</span>
         </h1>
         <p className="py-5 sm:py-6 text-sm text-slate-500 dark:text-slate-400 sm:text-lg">
           {bioText}
@@ -399,4 +399,4 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
       )}
     </>
   );
-}
+} 

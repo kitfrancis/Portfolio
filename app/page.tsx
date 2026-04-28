@@ -15,15 +15,19 @@ import LoginPopover from "./components/LoginPopover";
 import EditableHero from "./components/editableHero";
 
 export const revalidate = 0;
-
-
 export default async function Home() {
+
+
 
   const bio = await prisma.bio.findMany({
     orderBy: {
       createdAt: "desc",
     },
   });
+
+  
+  const profilepic = bio[0];
+
 
   
 
@@ -66,7 +70,7 @@ export default async function Home() {
                   </div>
                 </div>
                  <div className="max-w-full mx-auto ">
-                {/* <img className="h-56 w-56 sm:h-70 sm:w-90 sm:pr-10"   src="{/images/nopp.png}" alt=""/> */}
+                <img className="h-56 w-56 sm:h-70 sm:w-90 sm:pr-10 object-cover shadow-xl" src={profilepic?.imageUrl || "/iamges/nopp/png"} alt="Profile portrait"/>
               </div>
               
             </div>
@@ -75,9 +79,9 @@ export default async function Home() {
             
 
               <div className="max-w-full mx-auto lg:px-6 px-0 py-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-30 mt-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-15 mt-10">
                   <div className="flex flex-col gap-4">
-                    <h1 className="font-semibold sm:text-2xl text-xl mb-4 ">{"<Frontend>"}</h1>
+                    <h1 className="font-semibold sm:text-2xl text-xl mb-4 text-cyan-500">{"<Frontend>"}</h1>
                     <div className="flex flex-wrap gap-4 ">
                   
                       {frontendStacks.length > 0 ? (
@@ -93,7 +97,7 @@ export default async function Home() {
                     </div>
                   </div>
                   <div className="flex flex-col gap-4">
-                    <h1 className="font-medium sm:text-2xl text-xl mb-4 ">{"</Backend & Database>"}</h1>
+                    <h1 className="font-medium sm:text-2xl text-xl mb-4 text-cyan-500 ">{"</Backend & Database>"}</h1>
                     <div className="flex flex-wrap gap-4 mb-10">
                       {backendStacks.length > 0 ? (
                   backendStacks.map((backend) => (
@@ -119,7 +123,7 @@ export default async function Home() {
                 <hr className="w-full border-solid border-gray-300 mt-4"/>
              
               <div className="max-w-full mx-auto py-5 p-6">
-                <h1 className="font-bold sm:text-3xl text-2xl my-13 md:my-15 ">Featured Projects</h1>
+                <h1 className="font-bold sm:text-3xl text-2xl my-13 md:my-15  text-cyan-500">Featured Projects</h1>
                 
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -47,7 +47,7 @@ export default function LoginPopover() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button className="bg-background opacity-15">⚙</Button>
+        <Button className="bg-background">⚙</Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
