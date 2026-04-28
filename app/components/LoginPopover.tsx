@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "sonner";
 import { signIn, signOut, useSession } from "@/lib/auth-client";
+import { Settings } from "lucide-react";
 
 export default function LoginPopover() {
   const [email, setEmail] = useState("");
@@ -47,7 +48,7 @@ export default function LoginPopover() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button className="bg-background">⚙</Button>
+        <Button className="text-foreground bg-background"><Settings/></Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
