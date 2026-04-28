@@ -51,11 +51,11 @@ export default async function Home() {
   return (
     <main className="min-h-screen scroll-smooth">
         <div className="lg:ml-64 mt-1 lg:mt-13  max-h-auto lg:px-5">
-          <div className="max-w-full mx-auto py-5 p-6 ">
+          <div className="max-w-full mx-auto px-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   
-                 <EditableHero name="Kit Francis Besa" bio="Kit Francis Besa"/>                
+                    <EditableHero name={bio[0]?.name ?? ""} bio={bio[0]?.bio ?? ""} />             
                   <div className="flex gap-4 items-center justify-center lg:justify-start">
                     <Button className="" asChild>
                       <Link className=" hover:bg-primary/90" href="/projects">View Projects</Link>
@@ -66,7 +66,7 @@ export default async function Home() {
                   </div>
                 </div>
                  <div className="max-w-full mx-auto ">
-                <img className="h-56 w-56 sm:h-70 sm:w-90 sm:pr-10"   src="/images/nopp.png" alt=""/>
+                {/* <img className="h-56 w-56 sm:h-70 sm:w-90 sm:pr-10"   src="{/images/nopp.png}" alt=""/> */}
               </div>
               
             </div>
@@ -75,12 +75,10 @@ export default async function Home() {
             
 
               <div className="max-w-full mx-auto lg:px-6 px-0 py-6">
-                <h1 className="font-bold sm:text-3xl text-2xl my-8 md:my-10 ">{"Tech Stack"}</h1>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-30">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-30 mt-10">
                   <div className="flex flex-col gap-4">
                     <h1 className="font-semibold sm:text-2xl text-xl mb-4 ">{"<Frontend>"}</h1>
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-wrap gap-4 ">
                   
                       {frontendStacks.length > 0 ? (
                   frontendStacks.map((frontend) => (

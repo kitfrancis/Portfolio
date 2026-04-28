@@ -8,11 +8,25 @@ import { Home, FileText, User, Mail, Icon } from "lucide-react";
 
 export default function navbar(){
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [name, setName] = useState("Kit Francis Besa");
+    const [imageUrl, setImageUrl] = useState("/images/nopp.png");
     const pathname = usePathname();
     
     useEffect(() => {
   setIsMenuOpen(false);
 }, [pathname]);
+
+
+
+  useEffect(() => {
+    fetch("/api/bio")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.name) setName(data.name);
+        if (data?.imageUrl) setImageUrl(data.imageUrl);
+      })
+      .catch(() => {});
+  }, []);
 
      const links = [
     { name: "About me", href: "/", icon: User },
@@ -25,12 +39,11 @@ export default function navbar(){
         <>
              <nav className="fixed top-0 left-0 h-full w-64 bg-gray-100 dark:bg-background shadow-md z-50 hidden lg:block"> 
           <div className="flex flex-col items-center justify-center w-full py-6">
-            <h1 className="text-2xl text-gray-500  font-bold mb-8">Kit Francis Besa</h1>
-            <img className="rounded-full items-center justify-center max-w-36" src="/images/nopp.png" alt="Profile-Pic" />
+            <h1 className="text-2xl text-gray-500  font-bold mb-8">{name}</h1>
+            <img className="rounded-full w-36 h-36 object-cover border-2 shadow-sm" src={imageUrl}  alt="Profile-Pic" />
             <div>
               <p className="text-center px-3 text-foreground  pt-2">
-                Hello world, I'm Kit Francis Sabrine Besa
-                Student at the University of Antique.
+                Hello world, I'm {name} Student at the University of Antique.
               </p>
             </div>
             <div className="flex gap-4 pt-3">
@@ -90,7 +103,7 @@ export default function navbar(){
      <div className="flex flex-col bg-white dark:bg-black px-4 pb-4 space-y-4">
             <h1 className="text-2xl text-black dark:text-white font-bold pt-5 flex justify-center">Kit Francis Besa</h1>
             <div className="flex justify-center items-center w-full">
-            <img src="/images/nopp.png" alt="Profile" className="rounded-full max-w-32 " />
+            <img src={imageUrl} alt="Profile" className="rounded-full w-32 h-32 object-cover border-2 shadow-md" />
             </div>
             <p className="text-center px-3 text-black dark:text-white pt-2">
               Hello world, I'm Kit Francis Sabrine Besa
