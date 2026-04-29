@@ -39,7 +39,7 @@ export default function navbar(){
         <>
              <nav className="fixed top-0 left-0 h-full w-64 bg-gray-100 dark:bg-background shadow-md z-50 hidden lg:block"> 
           <div className="flex flex-col items-center justify-center w-full py-6">
-            <h1 className="text-2xl text-gray-500  font-bold mb-8">{name}</h1>
+            <h1 className="text-2xl text-gray-500 text-center font-bold mb-8">{name}</h1>
             <img className="rounded-full w-36 h-36 object-cover border-2 shadow-sm" src={imageUrl}  alt="Profile-Pic" />
             <div>
               <p className="text-center px-3 text-foreground  pt-2">
@@ -61,7 +61,7 @@ export default function navbar(){
                   key={link.name}
                   href={link.href}
                   className={`flex items-center gap-2 w-full text-left rounded-md px-4 py-2 text-lg font-bold transition duration-200
-                    ${isActive ? "bg-gray-700 text-white" : "text-gray-400  hover:bg-gray-700  hover:text-white"}`}
+                    ${isActive ? "bg-gray-700 text-white" : "text-muted-foreground  hover:bg-gray-700  hover:text-white"}`}
                 >
                   <Icon className="w-5 h-5" />
                   {link.name}
@@ -124,7 +124,7 @@ export default function navbar(){
                 key={link.name}
                 href={link.href}
                 className={`flex items-center gap-2 w-full text-left rounded-md px-4 py-2 text-lg font-medium transition duration-200
-                  ${isActive ? "bg-gray-700 text-white" : "text-gray-600 hover:bg-blue-700 hover:text-white"}`}
+                  ${isActive ? "bg-gray-700 text-white" : "text-muted-foreground hover:bg-blue-700 hover:text-white"}`}
               >
                 <Icon className="w-5 h-5" />
                 {link.name}

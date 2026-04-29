@@ -102,8 +102,8 @@ export default function ProjectsPage() {
     <main className="min-h-screen scroll-smooth">
       <div className="lg:ml-64 mt-1 lg:mt-13 max-h-auto lg:px-5">
         <div className="max-w-full mx-auto py-5 p-6">
-          <h1 className="flex justify-center items-center font-bold sm:text-4xl text-3xl">Projects</h1>
-          <p className="flex justify-center items-center font-medium text-center px-0 md:px-40 mt-3 text-muted-foreground">
+          <h1 className="flex justify-center items-center font-bold lg:text-4xl text-3xl">Projects</h1>
+          <p className=" text-sm flex justify-center items-center font-medium text-center px-0 md:px-40 mt-3 text-muted-foreground">
             Welcome to my online portfolio. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. I'm taking on freelance work at the moment. Want some help building your software?
           </p>
 
