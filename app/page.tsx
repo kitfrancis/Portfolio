@@ -8,7 +8,6 @@ import ProjectAccordion from "./components/ProjectAccordion";
 
 export const revalidate = 0;
 
-// TODO: put your real profile URLs here
 const SOCIALS = [
   { label: "facebook", handle: "Kit Francis Sabrine Besa", href: "https://facebook.com/" },
   { label: "github", handle: "kitfrancis", href: "https://github.com/kitfrancis" },

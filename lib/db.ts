@@ -4,8 +4,9 @@ import { PrismaPg } from "@prisma/adapter-pg";
 const prismaClientSingleton = () => {
   const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL,
-    max: 5,
-    connectionTimeoutMillis: 5000, // fail fast instead of hanging when the DB is unreachable
+    max: 3,
+    connectionTimeoutMillis: 15000,
+    idleTimeoutMillis: 10000,
   });
   return new PrismaClient({ adapter });
 };
