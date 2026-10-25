@@ -47,7 +47,8 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col font-sans antialiased">
         <ThemeProviderWrapper>
-          <div className="fixed top-4 right-4 z-50">
+          {/* Desktop only. On mobile the toggle lives in the navbar's top bar. */}
+          <div className="fixed top-4 right-4 z-50 hidden lg:block">
             <ThemeToggle />
           </div>
           <Navbar />

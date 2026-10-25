@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Command } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-provider";
 
 const links = [
   { name: "About me", href: "/" },
@@ -168,7 +169,8 @@ export default function Navbar() {
             <img src={imageUrl} alt="" className="h-9 w-9 shrink-0 rounded-full border object-cover" />
             <span className="truncate text-sm font-bold">{name}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
+            <ThemeToggle />
             <button
               onClick={() => setPaletteOpen(true)}
               aria-label="Open command menu"
