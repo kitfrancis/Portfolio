@@ -9,9 +9,9 @@ import ProjectAccordion from "./components/ProjectAccordion";
 export const revalidate = 0;
 
 const SOCIALS = [
-  { label: "facebook", handle: "Kit Francis Sabrine Besa", href: "https://facebook.com/" },
+  { label: "facebook", handle: "Kit Francis Sabrine Besa", href: "https://facebook.com/kitbesa" },
   { label: "github", handle: "kitfrancis", href: "https://github.com/kitfrancis" },
-  { label: "linkedin", handle: "kitfrancis-besa", href: "https://linkedin.com/in/" },
+  { label: "linkedin", handle: "kitfrancis-besa", href: "https://linkedin.com/in/kitfrancisbesa" },
 ];
 
 async function safe<T>(label: string, query: Promise<T[]>): Promise<T[]> {
@@ -158,6 +158,24 @@ export default async function Home() {
           </div>
         </footer>
       </div>
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: "Kit Francis Besa",
+      url: "https://www.kitfrancisbesa.me",
+      jobTitle: "Software Engineering Student",
+      alumniOf: { "@type": "CollegeOrUniversity", name: "University of Antique" },
+      sameAs: SOCIALS.map((s) => s.href),
+    }),
+  }}
+/>
     </main>
+    
   );
+  
 }
+
+

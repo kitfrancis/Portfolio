@@ -19,8 +19,17 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kit-Francis-Besa-Portfolio",
-  description: "Personal portfolio website showcasing projects and skills.",
+  metadataBase: new URL("https://www.kitfrancisbesa.me"),
+  title: "Kit Francis Besa | Software Engineering Student",
+  description:
+    "Kit Francis Besa is a software engineering student at the University of Antique. See his projects, tech stack and contact details.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Kit Francis Besa | Software Engineering Student",
+    description: "Portfolio of Kit Francis Besa, University of Antique.",
+    url: "/",
+    type: "profile",
+  },
 };
 
 export default function RootLayout({
