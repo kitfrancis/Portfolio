@@ -6,12 +6,16 @@ import EditableHero from "./components/editableHero";
 import ScrollExtras from "./components/ScrollExtras";
 import ProjectAccordion from "./components/ProjectAccordion";
 
+export const metadata = {
+  alternates: { canonical: "/" },
+};
+
 export const revalidate = 0;
 
 const SOCIALS = [
-  { label: "facebook", handle: "Kit Francis Sabrine Besa", href: "https://facebook.com/kitbesa" },
+  { label: "facebook", handle: "kitbesa", href: "https://facebook.com/kitbesa" },
   { label: "github", handle: "kitfrancis", href: "https://github.com/kitfrancis" },
-  { label: "linkedin", handle: "kitfrancis-besa", href: "https://linkedin.com/in/kitfrancisbesa" },
+  { label: "instagram", handle: "kititeee", href: "https://www.instagram.com/kititeee/" },
 ];
 
 async function safe<T>(label: string, query: Promise<T[]>): Promise<T[]> {
