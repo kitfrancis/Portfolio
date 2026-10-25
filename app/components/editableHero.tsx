@@ -13,6 +13,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Pencil, Camera, X } from "lucide-react";
 
 type Project = {
   id: string;
@@ -24,11 +25,66 @@ type Project = {
 
 type Stack = { id: string; name: string };
 
+// Shared look for every input in the edit dialog
+const field =
+  "w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none transition focus-visible:ring-2 focus-visible:ring-cyan-500";
+const labelClass = "font-mono text-xs text-muted-foreground";
+const chipClass =
+  "flex items-center gap-1.5 rounded-md border bg-background px-2.5 py-1 font-mono text-xs text-muted-foreground";
+
+// Only keep real items that have an id, and drop duplicates
+function cleanList<T extends { id?: string }>(value: unknown): T[] {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set<string>();
+  return (value as T[]).filter((item) => {
+    if (!item || !item.id || seen.has(item.id)) return false;
+    seen.add(item.id);
+    return true;
+  });
+}
+
+async function getJson(url: string) {
+  try {
+    const res = await fetch(url);
+    return res.ok ? await res.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+// Resize + compress an image file to a small JPEG data URL
+function compressImage(file: File, maxWidth = 1200, quality = 0.8): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("read failed"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("image failed"));
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("canvas failed"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function EditableHero({ bio, name: initialName }: { bio: string; name: string }) {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const projectFileRef = useRef<HTMLInputElement>(null);
 
   const [bioText, setBioText] = useState(bio);
   const [name, setName] = useState(initialName);
@@ -55,21 +111,21 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
   }, [bio, initialName]);
 
   useEffect(() => {
-    if (open && session) return;
+    if (!open || !session) return;
     fetchAll();
   }, [open, session]);
 
   const fetchAll = async () => {
     const [fe, be, proj, bioData] = await Promise.all([
-      fetch("/api/frontend-stack").then((r) => r.json()),
-      fetch("/api/backend-stack").then((r) => r.json()),
-      fetch("/api/projects").then((r) => r.json()),
-      fetch("/api/bio").then((r) => r.json()),
+      getJson("/api/frontend-stack"),
+      getJson("/api/backend-stack"),
+      getJson("/api/projects"),
+      getJson("/api/bio"),
     ]);
-    setFrontendStacks(fe);
-    setBackendStacks(be);
-    setProjects(proj);
-    if (bioData) {
+    setFrontendStacks(cleanList<Stack>(fe));
+    setBackendStacks(cleanList<Stack>(be));
+    setProjects(cleanList<Project>(proj));
+    if (bioData && !bioData.error) {
       setBioText(bioData.bio || "");
       setName(bioData.name || "");
       setImageUrl(bioData.imageUrl || "");
@@ -77,30 +133,54 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Profile photo is now compressed too, so it never gets stored as a huge string
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image must be under 2MB");
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5MB");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-      setImageUrl(base64);
-      setImagePreview(base64);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const dataUrl = await compressImage(file, 900);
+      setImageUrl(dataUrl);
+      setImagePreview(dataUrl);
+    } catch {
+      toast.error("Could not read that image");
+    }
+  };
+
+  const handleProjectFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5MB");
+      return;
+    }
+
+    try {
+      const dataUrl = await compressImage(file);
+      setNewProject((p) => ({ ...p, imageUrl: dataUrl }));
+    } catch {
+      toast.error("Could not read that image");
+    }
   };
 
   const saveBio = async () => {
-    await fetch("/api/bio", {
+    const res = await fetch("/api/bio", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, bio: bioText, imageUrl }),
     });
+    if (!res.ok) {
+      toast.error("Failed to save bio");
+      return;
+    }
     toast.success("Bio saved!");
     router.refresh();
   };
@@ -112,11 +192,12 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     }
     setUploading(true);
     try {
-      await fetch("/api/bio", {
+      const res = await fetch("/api/bio", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, bio: bioText, imageUrl }),
       });
+      if (!res.ok) throw new Error("save failed");
       toast.success("Profile picture updated!");
       router.refresh();
     } catch {
@@ -133,8 +214,12 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newFrontend }),
     });
-    const created = await res.json();
-    setFrontendStacks((prev) => [created, ...prev]);
+    const created = await res.json().catch(() => null);
+    if (!res.ok || !created?.id) {
+      toast.error("Failed to add frontend stack");
+      return;
+    }
+    setFrontendStacks((prev) => [created, ...prev.filter((s) => s.id !== created.id)]);
     setNewFrontend("");
     toast.success("Frontend stack added!");
     router.refresh();
@@ -155,8 +240,12 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newBackend }),
     });
-    const created = await res.json();
-    setBackendStacks((prev) => [created, ...prev]);
+    const created = await res.json().catch(() => null);
+    if (!res.ok || !created?.id) {
+      toast.error("Failed to add backend stack");
+      return;
+    }
+    setBackendStacks((prev) => [created, ...prev.filter((s) => s.id !== created.id)]);
     setNewBackend("");
     toast.success("Backend stack added!");
     router.refresh();
@@ -172,13 +261,21 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
 
   const addProject = async () => {
     if (!newProject.title.trim()) return;
+    if (!newProject.imageUrl) {
+      toast.error("Please choose a project image");
+      return;
+    }
     const res = await fetch("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newProject),
     });
-    const created = await res.json();
-    setProjects((prev) => [created, ...prev]);
+    const created = await res.json().catch(() => null);
+    if (!res.ok || !created?.id) {
+      toast.error("Failed to add project");
+      return;
+    }
+    setProjects((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
     setNewProject({ title: "", description: "", imageUrl: "", category: "web" });
     toast.success("Project added!");
     router.refresh();
@@ -195,76 +292,71 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold sm:text-3xl text-slate-800 dark:text-slate-100">
-          Hi, I'm <span className="text-cyan-500">{name}</span>
-        </h1>
-        <p className="py-5 sm:py-6 text-sm text-muted-foreground sm:text-lg">
-          {bioText}
-        </p>
+        <h1 className="text-4xl font-extrabold tracking-tighter sm:text-6xl">Hi, I’m {name}</h1>
+        <p className="max-w-xl py-5 text-base leading-relaxed text-muted-foreground sm:text-lg">{bioText}</p>
       </div>
 
       {session && (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="fixed top-15 right-4 z-50" size="sm" variant="outline">
-              ✏️
+            <Button
+              className="fixed right-4 top-20 z-50 rounded-full"
+              size="icon"
+              variant="outline"
+              aria-label="Edit portfolio"
+            >
+              <Pencil className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Edit Portfolio</DialogTitle>
+              <DialogTitle className="font-mono text-sm">Edit portfolio</DialogTitle>
             </DialogHeader>
 
             <Tabs defaultValue="bio">
               <TabsList className="w-full">
                 <TabsTrigger value="bio">Bio</TabsTrigger>
                 <TabsTrigger value="image">Image</TabsTrigger>
-                <TabsTrigger value="stack">Tech Stack</TabsTrigger>
+                <TabsTrigger value="stack">Tech stack</TabsTrigger>
                 <TabsTrigger value="projects">Projects</TabsTrigger>
               </TabsList>
 
               {/* Bio Tab */}
-              <TabsContent value="bio" className="flex flex-col gap-3 mt-4">
-                <label className="font-semibold text-sm">Name</label>
-                <input
-                  className="border rounded px-3 py-2 text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-100"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <label className="font-semibold text-sm">Bio</label>
+              <TabsContent value="bio" className="mt-4 flex flex-col gap-3">
+                <label htmlFor="e-name" className={labelClass}>Name</label>
+                <input id="e-name" className={field} value={name} onChange={(e) => setName(e.target.value)} />
+                <label htmlFor="e-bio" className={labelClass}>Bio</label>
                 <textarea
-                  className="border rounded px-3 py-2 text-sm h-32 resize-none bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-100"
+                  id="e-bio"
+                  className={`${field} h-32 resize-none`}
                   value={bioText}
                   onChange={(e) => setBioText(e.target.value)}
                 />
-                <Button onClick={saveBio}>Save Bio</Button>
+                <Button onClick={saveBio}>Save bio</Button>
               </TabsContent>
 
               {/* Image Tab */}
-              <TabsContent value="image" className="flex flex-col gap-4 mt-4">
-                {/* Avatar preview with click-to-upload */}
-                <div className="flex flex-col items-center gap-4">
-                  <div
-                    className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-slate-200 dark:border-zinc-700 cursor-pointer group"
+              <TabsContent value="image" className="mt-4 flex flex-col gap-4">
+                <div className="flex flex-col items-center gap-3">
+                  <button
+                    type="button"
                     onClick={() => fileInputRef.current?.click()}
+                    aria-label="Choose a profile picture"
+                    className="group relative h-32 w-32 overflow-hidden rounded-full border-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
                   >
                     <img
                       src={imagePreview || "/images/nopp.png"}
                       alt="Profile"
-                      className="w-full h-full object-cover"
+                      className="h-full w-full object-cover"
                     />
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1">
-                      <span className="text-white text-xl">📷</span>
-                      <span className="text-white text-xs font-medium">Change</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-400 dark:text-slate-500">
-                    Click the avatar to upload · Max 2MB · JPG, PNG, WEBP
-                  </p>
+                    <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                      <Camera className="h-5 w-5" />
+                      <span className="text-xs font-medium">Change</span>
+                    </span>
+                  </button>
+                  <p className="font-mono text-xs text-muted-foreground">Click the photo to upload · Max 5MB · JPG, PNG, WEBP</p>
                 </div>
 
-                {/* Hidden file input */}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -273,13 +365,11 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                   onChange={handleFileChange}
                 />
 
-                {/* Or paste URL fallback */}
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                    Or paste an image URL
-                  </label>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="e-url" className={labelClass}>Or paste an image URL</label>
                   <input
-                    className="border rounded px-3 py-2 text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-100"
+                    id="e-url"
+                    className={field}
                     placeholder="https://..."
                     value={imageUrl.startsWith("data:") ? "" : imageUrl}
                     onChange={(e) => {
@@ -290,18 +380,19 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                 </div>
 
                 <Button onClick={saveImage} disabled={uploading}>
-                  {uploading ? "Saving..." : "Save Profile Picture"}
+                  {uploading ? "Saving..." : "Save profile picture"}
                 </Button>
               </TabsContent>
 
               {/* Stack Tab */}
-              <TabsContent value="stack" className="flex flex-col gap-4 mt-4">
+              <TabsContent value="stack" className="mt-4 flex flex-col gap-6">
                 <div>
-                  <p className="font-semibold text-sm mb-2">Frontend</p>
-                  <div className="flex gap-2 mb-2">
+                  <p className={`${labelClass} mb-2`}>Frontend</p>
+                  <div className="mb-3 flex gap-2">
                     <input
-                      className="border rounded px-3 py-2 text-sm flex-1 bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-100"
+                      className={`${field} flex-1`}
                       placeholder="e.g. React"
+                      aria-label="New frontend skill"
                       value={newFrontend}
                       onChange={(e) => setNewFrontend(e.target.value)}
                     />
@@ -309,23 +400,27 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {frontendStacks.map((s) => (
-                      <span
-                        key={s.id}
-                        className="flex items-center gap-1 border rounded px-2 py-1 text-xs bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-300"
-                      >
+                      <span key={s.id} className={chipClass}>
                         {s.name}
-                        <button onClick={() => deleteFrontend(s.id)} className="text-red-500 ml-1">×</button>
+                        <button
+                          onClick={() => deleteFrontend(s.id)}
+                          aria-label={`Remove ${s.name}`}
+                          className="text-red-500 transition hover:text-red-400"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
                       </span>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <p className="font-semibold text-sm mb-2">Backend & Database</p>
-                  <div className="flex gap-2 mb-2">
+                  <p className={`${labelClass} mb-2`}>Backend & database</p>
+                  <div className="mb-3 flex gap-2">
                     <input
-                      className="border rounded px-3 py-2 text-sm flex-1 bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-100"
+                      className={`${field} flex-1`}
                       placeholder="e.g. Node.js"
+                      aria-label="New backend skill"
                       value={newBackend}
                       onChange={(e) => setNewBackend(e.target.value)}
                     />
@@ -333,12 +428,15 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {backendStacks.map((s) => (
-                      <span
-                        key={s.id}
-                        className="flex items-center gap-1 border rounded px-2 py-1 text-xs bg-slate-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-300"
-                      >
+                      <span key={s.id} className={chipClass}>
                         {s.name}
-                        <button onClick={() => deleteBackend(s.id)} className="text-red-500 ml-1">×</button>
+                        <button
+                          onClick={() => deleteBackend(s.id)}
+                          aria-label={`Remove ${s.name}`}
+                          className="text-red-500 transition hover:text-red-400"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
                       </span>
                     ))}
                   </div>
@@ -346,28 +444,56 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
               </TabsContent>
 
               {/* Projects Tab */}
-              <TabsContent value="projects" className="flex flex-col gap-4 mt-4">
-                <p className="font-semibold text-sm">Add New Project</p>
+              <TabsContent value="projects" className="mt-4 flex flex-col gap-4">
+                <p className={labelClass}>Add new project</p>
                 <input
-                  className="border rounded px-3 py-2 text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-100"
+                  className={field}
                   placeholder="Title"
+                  aria-label="Project title"
                   value={newProject.title}
                   onChange={(e) => setNewProject((p) => ({ ...p, title: e.target.value }))}
                 />
                 <textarea
-                  className="border rounded px-3 py-2 text-sm h-20 resize-none bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-100"
+                  className={`${field} h-20 resize-none`}
                   placeholder="Description"
+                  aria-label="Project description"
                   value={newProject.description}
                   onChange={(e) => setNewProject((p) => ({ ...p, description: e.target.value }))}
                 />
-                <input
-                  className="border rounded px-3 py-2 text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-100"
-                  placeholder="Image URL"
-                  value={newProject.imageUrl}
-                  onChange={(e) => setNewProject((p) => ({ ...p, imageUrl: e.target.value }))}
-                />
+
+                <div className="flex flex-col gap-2">
+                  <span className={labelClass}>Project image</span>
+                  <button
+                    type="button"
+                    onClick={() => projectFileRef.current?.click()}
+                    aria-label="Choose a project image"
+                    className="group relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border border-dashed bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+                  >
+                    {newProject.imageUrl ? (
+                      <>
+                        <img src={newProject.imageUrl} alt="Project preview" className="h-full w-full object-cover" />
+                        <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+                          Change image
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-mono text-xs text-muted-foreground">
+                        Click to choose an image · Max 5MB · JPG, PNG, WEBP
+                      </span>
+                    )}
+                  </button>
+                  <input
+                    ref={projectFileRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleProjectFileChange}
+                  />
+                </div>
+
                 <select
-                  className="border rounded px-3 py-2 text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-slate-100"
+                  className={field}
+                  aria-label="Project category"
                   value={newProject.category}
                   onChange={(e) => setNewProject((p) => ({ ...p, category: e.target.value }))}
                 >
@@ -375,18 +501,18 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                   <option value="mobile">Mobile</option>
                   <option value="other">Other</option>
                 </select>
-                <Button onClick={addProject}>Add Project</Button>
+                <Button onClick={addProject}>Add project</Button>
 
-                <hr className="dark:border-zinc-700" />
-                <p className="font-semibold text-sm">Existing Projects</p>
+                <hr />
+                <p className={labelClass}>Existing projects</p>
                 <div className="flex flex-col gap-2">
                   {projects.map((p) => (
-                    <div
-                      key={p.id}
-                      className="flex items-center justify-between border rounded px-3 py-2 text-sm dark:border-zinc-700 dark:text-slate-300"
-                    >
+                    <div key={p.id} className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
                       <span>{p.title}</span>
-                      <button onClick={() => deleteProject(p.id)} className="text-red-500 text-xs">
+                      <button
+                        onClick={() => deleteProject(p.id)}
+                        className="font-mono text-xs text-red-500 transition hover:text-red-400"
+                      >
                         Delete
                       </button>
                     </div>
@@ -399,4 +525,4 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
       )}
     </>
   );
-} 
+}

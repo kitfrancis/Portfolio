@@ -1,18 +1,23 @@
 import { PrismaClient } from "./generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL
-});
 const prismaClientSingleton = () => {
-    return  new PrismaClient({ adapter});
+  const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
+    max: 5,
+    connectionTimeoutMillis: 5000, // fail fast instead of hanging when the DB is unreachable
+  });
+  return new PrismaClient({ adapter });
 };
+
 declare const globalThis: {
-    prismaGlobal?: ReturnType<typeof prismaClientSingleton>;
+  prismaGlobal?: ReturnType<typeof prismaClientSingleton>;
 } & typeof global;
+
 const prisma = globalThis.prismaGlobal || prismaClientSingleton();
+
 if (process.env.NODE_ENV !== "production") {
-    globalThis.prismaGlobal = prisma;
+  globalThis.prismaGlobal = prisma;
 }
 
 export default prisma;

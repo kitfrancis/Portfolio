@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/navbar";
-import { ThemeProvider, ThemeToggle } from "@/components/ui/theme-provider";
+import { ThemeToggle } from "@/components/ui/theme-provider";
 import ThemeProviderWrapper from "@/components/ui/ThemeProviderWrapper";
 import { Toaster } from "@/components/ui/sonner";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Kit-Francis-Besa-Portfolio",
@@ -20,19 +31,17 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      className={`${inter.variable} ${jetbrains.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
-        <ThemeProviderWrapper
-          
-        >
+      <body className="flex min-h-full flex-col font-sans antialiased">
+        <ThemeProviderWrapper>
           <div className="fixed top-4 right-4 z-50">
             <ThemeToggle />
           </div>
           <Navbar />
-          <main>{children}
-          </main>
-             <Toaster />
+          <div>{children}</div>
+          <Toaster />
         </ThemeProviderWrapper>
       </body>
     </html>
