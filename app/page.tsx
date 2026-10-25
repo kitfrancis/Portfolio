@@ -18,6 +18,71 @@ const SOCIALS = [
   { label: "instagram", handle: "kititeee", href: "https://www.instagram.com/kititeee/" },
 ];
 
+type Education = {
+  level: string;
+  levelClass: string;
+  school: string;
+  program: string;
+  years: string;
+  address?: string;
+  description: string;
+  details?: { icon: string; label: string; value: string }[];
+  expandLabel?: string;
+  expandItems?: string[];
+};
+
+// Add more entries (e.g. Junior High, Elementary) to this array and they will appear automatically.
+const EDUCATION: Education[] = [
+  {
+    level: "College",
+    levelClass: "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    school: "University of Antique",
+    program: "BS in Information Technology",
+    years: "2022 — Present",
+    address: "University of Antique Main Campus, Sibalom, Antique",
+    description:
+      "Focusing on full-stack web development, software architectural patterns, and capstone research. Leading development on thesis management systems and campus event portals.",
+ 
+    expandLabel: "View Key University Subjects & Tech",
+    expandItems: [
+      "Full-stack web development",
+      "Software architectural patterns",
+      "Capstone research",
+      "Thesis management system",
+      "Campus event portal",
+    ],
+  },
+  {
+    level: "Senior High School",
+    levelClass: "border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400",
+    school: "Pangpang National High School - Senior High School",
+    program: "ABM Strand (Accountancy, Business, and Management) ",
+    years: "2020 — 2022",
+    address: "Pangpang, Sibalom, Antique",
+    description:
+      "Foundation in business principles, economics, and financial literacy. Developed critical thinking, public speaking, and basic accounting skills.",
+  },
+  {
+    level: "Junior High School",
+    levelClass: "border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400",
+    school: "Pangpang National High School",
+    program: "Junior High School (Grades 7–10)",
+    years: "2016 — 2020",
+    address: "Pangpang, Sibalom, Antique",
+    description:
+      "Focused on strengthening core subjects including mathematics, science, and Filipino. Participated in school clubs and competitions that enhanced leadership and teamwork.",
+  },
+  {
+    level: "Elementary",
+    levelClass: "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    school: "Alangan, Bungsod, Cubay Elementary School",
+    program: "Primary Education (Grades 1–6)",
+    years: "2010 — 2016",
+    address: "Bungsod, Sibalom, Antique",
+    description: "Elementary education focused on literacy, numeracy, and basic social skills.",
+  },
+];
+
 async function safe<T>(label: string, query: Promise<T[]>): Promise<T[]> {
   try {
     return await query;
@@ -113,6 +178,89 @@ export default async function Home() {
             </div>
           </section>
 
+          {/* ACADEMIC JOURNEY */}
+          <section className="border-t py-14" aria-labelledby="education">
+            <h2 id="education" className={sectionLabel}>
+              Academic journey <span className={rule} />
+            </h2>
+            <p className="-mt-3 mb-8 text-sm text-muted-foreground">
+              From primary elementary foundation to tertiary software engineering degree.
+            </p>
+
+            <ol className="relative space-y-6">
+              <span aria-hidden className="absolute bottom-0 left-[13px] top-2 w-px bg-border" />
+              {EDUCATION.map((e, i) => (
+                <li key={e.school} className="relative pl-11">
+                  <span
+                    className={`absolute left-0 top-5 flex h-7 w-7 items-center justify-center rounded-full border-2 bg-background font-mono text-xs ${
+                      i === 0 ? "border-emerald-400 text-emerald-500" : "border-border text-muted-foreground"
+                    }`}
+                  >
+                    {i + 1}
+                  </span>
+
+                  <div className="rounded-2xl border bg-card p-5 sm:p-6">
+                    <span className={`inline-block rounded border px-2 py-0.5 font-mono text-[11px] ${e.levelClass}`}>
+                      {e.level}
+                    </span>
+
+                    <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                      <div>
+                        <h3 className="text-lg font-bold leading-snug sm:text-xl">{e.school}</h3>
+                        <p className="mt-1 font-mono text-xs text-muted-foreground">{e.program}</p>
+                        {e.address && (
+                          <p className="mt-1.5 flex items-start gap-1.5 text-xs text-muted-foreground">
+                            <span aria-hidden>📍</span>
+                            <span>{e.address}</span>
+                          </p>
+                        )}
+                      </div>
+                      <span className="shrink-0 font-mono text-xs text-muted-foreground sm:max-w-[7rem] sm:text-right">
+                        {e.years}
+                      </span>
+                    </div>
+
+                    <p className="mt-4 border-t pt-4 text-sm leading-relaxed text-muted-foreground">
+                      {e.description}
+                    </p>
+
+                    {e.details && (
+                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                        {e.details.map((d) => (
+                          <div key={d.label} className="rounded-lg border bg-background/50 p-3">
+                            <p className="font-mono text-xs text-emerald-600 dark:text-emerald-400">
+                              {d.icon} {d.label}
+                            </p>
+                            <p className="mt-1.5 text-sm">{d.value}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {e.expandItems && (
+                      <details className="group mt-4">
+                        <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs text-muted-foreground transition hover:text-foreground [&::-webkit-details-marker]:hidden">
+                          <span className="transition group-open:rotate-90">›</span>
+                          {e.expandLabel}
+                        </summary>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {e.expandItems.map((item) => (
+                            <span
+                              key={item}
+                              className="rounded-md border px-2.5 py-1 font-mono text-xs text-muted-foreground"
+                            >
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      </details>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+
           {/* FEATURED WORK */}
           <section className="border-t py-14" aria-labelledby="work">
             <h2 id="work" className={sectionLabel}>
@@ -162,24 +310,20 @@ export default async function Home() {
           </div>
         </footer>
       </div>
-<script
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Person",
-      name: "Kit Francis Besa",
-      url: "https://www.kitfrancisbesa.me",
-      jobTitle: "Software Engineering Student",
-      alumniOf: { "@type": "CollegeOrUniversity", name: "University of Antique" },
-      sameAs: SOCIALS.map((s) => s.href),
-    }),
-  }}
-/>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Kit Francis Besa",
+            url: "https://www.kitfrancisbesa.me",
+            jobTitle: "Software Engineering Student",
+            alumniOf: { "@type": "CollegeOrUniversity", name: "University of Antique" },
+            sameAs: SOCIALS.map((s) => s.href),
+          }),
+        }}
+      />
     </main>
-    
   );
-  
 }
-
-
