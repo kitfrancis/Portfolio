@@ -81,3 +81,8 @@ export type backendStack = Prisma.backendStackModel
  * 
  */
 export type Bio = Prisma.BioModel
+/**
+ * Model Experience
+ * 
+ */
+export type Experience = Prisma.ExperienceModel

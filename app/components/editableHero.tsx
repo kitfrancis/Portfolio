@@ -25,6 +25,29 @@ type Project = {
 
 type Stack = { id: string; name: string };
 
+type ExperienceItem = {
+  id: string;
+  type: string;
+  title: string;
+  org: string;
+  years: string;
+  current: boolean;
+  summary: string;
+  highlights: string[];
+  stack: string[];
+};
+
+const emptyExperience = {
+  type: "",
+  title: "",
+  org: "",
+  years: "",
+  current: false,
+  summary: "",
+  highlightsText: "",
+  stackText: "",
+};
+
 // Shared look for every input in the edit dialog
 const field =
   "w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none transition focus-visible:ring-2 focus-visible:ring-cyan-500";
@@ -105,6 +128,11 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     category: "web",
   });
 
+  const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
+  const [expForm, setExpForm] = useState(emptyExperience);
+  const [editingExpId, setEditingExpId] = useState<string | null>(null);
+  const [savingExp, setSavingExp] = useState(false);
+
   useEffect(() => {
     setBioText(bio);
     setName(initialName);
@@ -116,15 +144,17 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
   }, [open, session]);
 
   const fetchAll = async () => {
-    const [fe, be, proj, bioData] = await Promise.all([
+    const [fe, be, proj, bioData, exp] = await Promise.all([
       getJson("/api/frontend-stack"),
       getJson("/api/backend-stack"),
       getJson("/api/projects"),
       getJson("/api/bio"),
+      getJson("/api/experience"),
     ]);
     setFrontendStacks(cleanList<Stack>(fe));
     setBackendStacks(cleanList<Stack>(be));
     setProjects(cleanList<Project>(proj));
+    setExperiences(cleanList<ExperienceItem>(exp));
     if (bioData && !bioData.error) {
       setBioText(bioData.bio || "");
       setName(bioData.name || "");
@@ -289,6 +319,80 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     router.refresh();
   };
 
+  const resetExpForm = () => {
+    setExpForm(emptyExperience);
+    setEditingExpId(null);
+  };
+
+  const startEditExperience = (item: ExperienceItem) => {
+    setEditingExpId(item.id);
+    setExpForm({
+      type: item.type,
+      title: item.title,
+      org: item.org,
+      years: item.years,
+      current: item.current,
+      summary: item.summary,
+      highlightsText: item.highlights.join("\n"),
+      stackText: item.stack.join(", "),
+    });
+  };
+
+  const saveExperience = async () => {
+    if (!expForm.title.trim() || !expForm.org.trim() || !expForm.years.trim()) {
+      toast.error("Title, organization and years are required");
+      return;
+    }
+    setSavingExp(true);
+    try {
+      const payload = {
+        type: expForm.type,
+        title: expForm.title,
+        org: expForm.org,
+        years: expForm.years,
+        current: expForm.current,
+        summary: expForm.summary,
+        highlights: expForm.highlightsText.split("\n").map((h) => h.trim()).filter(Boolean),
+        stack: expForm.stackText.split(",").map((t) => t.trim()).filter(Boolean),
+      };
+      const editing = editingExpId;
+      const res = await fetch(editing ? `/api/experience/${editing}` : "/api/experience", {
+        method: editing ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const saved = await res.json().catch(() => null);
+      if (!res.ok || !saved?.id) {
+        toast.error(saved?.error || "Failed to save experience");
+        return;
+      }
+      setExperiences((prev) =>
+        editing
+          ? prev.map((x) => (x.id === saved.id ? saved : x))
+          : [saved, ...prev.filter((x) => x.id !== saved.id)]
+      );
+      resetExpForm();
+      toast.success(editing ? "Experience updated!" : "Experience added!");
+      router.refresh();
+    } catch {
+      toast.error("Failed to save experience");
+    } finally {
+      setSavingExp(false);
+    }
+  };
+
+  const deleteExperience = async (id: string) => {
+    const res = await fetch(`/api/experience/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      toast.error("Failed to delete experience");
+      return;
+    }
+    setExperiences((prev) => prev.filter((x) => x.id !== id));
+    if (editingExpId === id) resetExpForm();
+    toast.success("Experience deleted!");
+    router.refresh();
+  };
+
   return (
     <>
       <div>
@@ -319,6 +423,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                 <TabsTrigger value="image">Image</TabsTrigger>
                 <TabsTrigger value="stack">Tech stack</TabsTrigger>
                 <TabsTrigger value="projects">Projects</TabsTrigger>
+                <TabsTrigger value="experience">Experience</TabsTrigger>
               </TabsList>
 
               {/* Bio Tab */}
@@ -515,6 +620,120 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                       >
                         Delete
                       </button>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+
+              {/* Experience Tab */}
+              <TabsContent value="experience" className="mt-4 flex flex-col gap-4">
+                <p className={labelClass}>{editingExpId ? "Edit experience" : "Add experience"}</p>
+
+                <input
+                  className={field}
+                  placeholder="Type (e.g. Project, Work, Internship)"
+                  aria-label="Experience type"
+                  value={expForm.type}
+                  onChange={(e) => setExpForm((f) => ({ ...f, type: e.target.value }))}
+                />
+
+                <input
+                  className={field}
+                  placeholder="Title (e.g. Thesis Management System)"
+                  aria-label="Experience title"
+                  value={expForm.title}
+                  onChange={(e) => setExpForm((f) => ({ ...f, title: e.target.value }))}
+                />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <input
+                    className={field}
+                    placeholder="Organization"
+                    aria-label="Organization"
+                    value={expForm.org}
+                    onChange={(e) => setExpForm((f) => ({ ...f, org: e.target.value }))}
+                  />
+                  <input
+                    className={field}
+                    placeholder="Years (e.g. 2024 — Present)"
+                    aria-label="Years"
+                    value={expForm.years}
+                    onChange={(e) => setExpForm((f) => ({ ...f, years: e.target.value }))}
+                  />
+                </div>
+
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={expForm.current}
+                    onChange={(e) => setExpForm((f) => ({ ...f, current: e.target.checked }))}
+                  />
+                  Ongoing
+                </label>
+
+                <textarea
+                  className={`${field} h-20 resize-none`}
+                  placeholder="Short summary"
+                  aria-label="Summary"
+                  value={expForm.summary}
+                  onChange={(e) => setExpForm((f) => ({ ...f, summary: e.target.value }))}
+                />
+                <textarea
+                  className={`${field} h-28 resize-none`}
+                  placeholder={"What I did (one per line)"}
+                  aria-label="Highlights, one per line"
+                  value={expForm.highlightsText}
+                  onChange={(e) => setExpForm((f) => ({ ...f, highlightsText: e.target.value }))}
+                />
+                <input
+                  className={field}
+                  placeholder="Tech used, comma separated (e.g. Next.js, Prisma)"
+                  aria-label="Tech used"
+                  value={expForm.stackText}
+                  onChange={(e) => setExpForm((f) => ({ ...f, stackText: e.target.value }))}
+                />
+
+                <div className="flex gap-2">
+                  <Button onClick={saveExperience} disabled={savingExp} className="flex-1">
+                    {savingExp ? "Saving..." : editingExpId ? "Save changes" : "Add experience"}
+                  </Button>
+                  {editingExpId && (
+                    <Button variant="outline" onClick={resetExpForm}>
+                      Cancel
+                    </Button>
+                  )}
+                </div>
+
+                <hr />
+                <p className={labelClass}>Existing experience</p>
+                <div className="flex flex-col gap-2">
+                  {experiences.length === 0 && (
+                    <p className="text-sm text-muted-foreground">Nothing added yet.</p>
+                  )}
+                  {experiences.map((x) => (
+                    <div
+                      key={x.id}
+                      className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm ${
+                        editingExpId === x.id ? "border-cyan-500" : ""
+                      }`}
+                    >
+                      <span className="min-w-0 truncate">
+                        {x.title}
+                        <span className="ml-2 font-mono text-xs text-muted-foreground">{x.years}</span>
+                      </span>
+                      <span className="flex shrink-0 gap-3">
+                        <button
+                          onClick={() => startEditExperience(x)}
+                          className="font-mono text-xs text-cyan-600 transition hover:text-cyan-500 dark:text-cyan-400"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteExperience(x.id)}
+                          className="font-mono text-xs text-red-500 transition hover:text-red-400"
+                        >
+                          Delete
+                        </button>
+                      </span>
                     </div>
                   ))}
                 </div>

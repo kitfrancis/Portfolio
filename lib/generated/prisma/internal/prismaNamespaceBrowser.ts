@@ -58,7 +58,8 @@ export const ModelName = {
   project: 'project',
   frontendStack: 'frontendStack',
   backendStack: 'backendStack',
-  Bio: 'Bio'
+  Bio: 'Bio',
+  Experience: 'Experience'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -178,6 +179,23 @@ export const BioScalarFieldEnum = {
 } as const
 
 export type BioScalarFieldEnum = (typeof BioScalarFieldEnum)[keyof typeof BioScalarFieldEnum]
+
+
+export const ExperienceScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  org: 'org',
+  years: 'years',
+  current: 'current',
+  summary: 'summary',
+  highlights: 'highlights',
+  stack: 'stack',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExperienceScalarFieldEnum = (typeof ExperienceScalarFieldEnum)[keyof typeof ExperienceScalarFieldEnum]
 
 
 export const SortOrder = {

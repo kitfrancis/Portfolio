@@ -83,6 +83,18 @@ const EDUCATION: Education[] = [
   },
 ];
 
+const TYPE_CLASSES: Record<string, string> = {
+  Project: "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  Work: "border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  Internship: "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  Freelance: "border-cyan-500/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
+  Personal: "border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-400",
+};
+const typeClass = (type: string) => {
+  const key = Object.keys(TYPE_CLASSES).find((k) => k.toLowerCase() === type.trim().toLowerCase());
+  return TYPE_CLASSES[key ?? "Project"];
+};
+
 async function safe<T>(label: string, query: Promise<T[]>): Promise<T[]> {
   try {
     return await query;
@@ -96,11 +108,12 @@ const sectionLabel = "mb-7 flex items-center gap-3 font-mono text-xs uppercase t
 const rule = "h-px flex-1 bg-border";
 
 export default async function Home() {
-  const [bio, frontendStacks, backendStacks, projects] = await Promise.all([
+  const [bio, frontendStacks, backendStacks, projects, experience] = await Promise.all([
     safe("bio", prisma.bio.findMany({ orderBy: { createdAt: "desc" } })),
     safe("frontend", prisma.frontendStack.findMany({ orderBy: { createdAt: "desc" } })),
     safe("backend", prisma.backendStack.findMany({ orderBy: { createdAt: "desc" } })),
     safe("projects", prisma.project.findMany({ orderBy: { createdAt: "desc" }, take: 3 })),
+    safe("experience", prisma.experience.findMany({ orderBy: { createdAt: "desc" } })),
   ]);
 
   const profilepic = bio[0];
@@ -145,6 +158,109 @@ export default async function Home() {
                 className="aspect-[4/5] w-full rounded-2xl border object-cover"
               />
             </div>
+          </section>
+
+          {/* FEATURED WORK */}
+          <section className="border-t py-14" aria-labelledby="work">
+            <h2 id="work" className={sectionLabel}>
+              Featured work <span className={rule} />
+            </h2>
+            {projects.length > 0 ? (
+              <ProjectAccordion projects={projects} seeAllLink />
+            ) : (
+              <div className="rounded-xl border border-dashed p-8 text-center">
+                <h3 className="font-semibold">No projects yet</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Log in and use the edit button to add your first project.
+                </p>
+              </div>
+            )}
+          </section>
+
+          {/* EXPERIENCE */}
+          <section className="border-t py-14" aria-labelledby="experience">
+            <h2 id="experience" className={sectionLabel}>
+              Experience <span className={rule} />
+            </h2>
+            <p className="-mt-3 mb-8 text-sm text-muted-foreground">
+              Products I&apos;ve designed and built, from thesis systems to campus portals.
+            </p>
+
+            {experience.length > 0 ? (
+            <ol className="relative space-y-10">
+              <span aria-hidden className="absolute bottom-0 left-[13px] top-2 w-px bg-border" />
+              {experience.map((e) => (
+                <li key={e.id} className="relative pl-11">
+                  <span
+                    aria-hidden
+                    className={`absolute left-[7px] top-2 h-3.5 w-3.5 rounded-full border-2 bg-background ${
+                      e.current ? "border-emerald-400" : "border-border"
+                    }`}
+                  />
+
+                  <article>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`inline-block rounded border px-2 py-0.5 font-mono text-[11px] ${typeClass(e.type)}`}>
+                        {e.type}
+                      </span>
+                      {e.current && (
+                        <span className="inline-block rounded border border-emerald-500/30 px-2 py-0.5 font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+                          Ongoing
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                      <div>
+                        <h3 className="text-lg font-bold leading-snug sm:text-xl">{e.title}</h3>
+                        <p className="mt-1 font-mono text-xs text-muted-foreground">{e.org}</p>
+                      </div>
+                      <span className="shrink-0 font-mono text-xs text-muted-foreground sm:text-right">
+                        {e.years}
+                      </span>
+                    </div>
+
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{e.summary}</p>
+
+                    {e.highlights.length > 0 && (
+                    <details className="group mt-4">
+                      <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs text-muted-foreground transition hover:text-foreground [&::-webkit-details-marker]:hidden">
+                        <span className="transition group-open:rotate-90">›</span>
+                        What I did
+                      </summary>
+                      <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                        {e.highlights.map((h) => (
+                          <li key={h} className="flex gap-2">
+                            <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-emerald-400" />
+                            <span>{h}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                    )}
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {e.stack.map((t) => (
+                        <span
+                          key={t}
+                          className="rounded-md border px-2.5 py-1 font-mono text-xs text-muted-foreground transition hover:border-cyan-500 hover:text-cyan-600 dark:hover:text-cyan-400"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                </li>
+              ))}
+            </ol>
+            ) : (
+              <div className="rounded-xl border border-dashed p-8 text-center">
+                <h3 className="font-semibold">No experience yet</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Log in and use the edit button to add your first experience.
+                </p>
+              </div>
+            )}
           </section>
 
           {/* CAPABILITIES */}
@@ -259,23 +375,6 @@ export default async function Home() {
                 </li>
               ))}
             </ol>
-          </section>
-
-          {/* FEATURED WORK */}
-          <section className="border-t py-14" aria-labelledby="work">
-            <h2 id="work" className={sectionLabel}>
-              Featured work <span className={rule} />
-            </h2>
-            {projects.length > 0 ? (
-              <ProjectAccordion projects={projects} seeAllLink />
-            ) : (
-              <div className="rounded-xl border border-dashed p-8 text-center">
-                <h3 className="font-semibold">No projects yet</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Log in and use the edit button to add your first project.
-                </p>
-              </div>
-            )}
           </section>
 
           {/* CONTACT */}

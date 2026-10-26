@@ -102,3 +102,19 @@ model Bio {
 
   @@map("bio")
 }
+
+model Experience {
+  id         String   @id @default(uuid())
+  type       String   @default("Project")
+  title      String
+  org        String
+  years      String
+  current    Boolean  @default(false)
+  summary    String
+  highlights String[]
+  stack      String[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("experience")
+}
