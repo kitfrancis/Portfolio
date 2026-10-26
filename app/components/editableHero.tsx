@@ -21,6 +21,7 @@ type Project = {
   description: string;
   imageUrl: string;
   category: string;
+  stack?: string[];
 };
 
 type Stack = { id: string; name: string };
@@ -126,6 +127,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     description: "",
     imageUrl: "",
     category: "web",
+    stackText: "",
   });
 
   const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
@@ -298,7 +300,13 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     const res = await fetch("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newProject),
+      body: JSON.stringify({
+        title: newProject.title,
+        description: newProject.description,
+        imageUrl: newProject.imageUrl,
+        category: newProject.category,
+        stack: newProject.stackText.split(",").map((t) => t.trim()).filter(Boolean),
+      }),
     });
     const created = await res.json().catch(() => null);
     if (!res.ok || !created?.id) {
@@ -306,7 +314,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
       return;
     }
     setProjects((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
-    setNewProject({ title: "", description: "", imageUrl: "", category: "web" });
+    setNewProject({ title: "", description: "", imageUrl: "", category: "web", stackText: "" });
     toast.success("Project added!");
     router.refresh();
   };
@@ -565,6 +573,13 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                   value={newProject.description}
                   onChange={(e) => setNewProject((p) => ({ ...p, description: e.target.value }))}
                 />
+                <input
+                  className={field}
+                  placeholder="Technologies used, comma separated (e.g. Next.js, Prisma, Tailwind CSS)"
+                  aria-label="Technologies used"
+                  value={newProject.stackText}
+                  onChange={(e) => setNewProject((p) => ({ ...p, stackText: e.target.value }))}
+                />
 
                 <div className="flex flex-col gap-2">
                   <span className={labelClass}>Project image</span>
@@ -613,7 +628,12 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                 <div className="flex flex-col gap-2">
                   {projects.map((p) => (
                     <div key={p.id} className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-                      <span>{p.title}</span>
+                      <span className="min-w-0 truncate">
+                        {p.title}
+                        {p.stack && p.stack.length > 0 && (
+                          <span className="ml-2 font-mono text-xs text-muted-foreground">{p.stack.join(", ")}</span>
+                        )}
+                      </span>
                       <button
                         onClick={() => deleteProject(p.id)}
                         className="font-mono text-xs text-red-500 transition hover:text-red-400"

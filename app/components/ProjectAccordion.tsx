@@ -9,6 +9,7 @@ type Item = {
   description: string;
   imageUrl: string | null;
   category?: string | null;
+  stack?: string[];
 };
 
 export default function ProjectAccordion({
@@ -91,6 +92,20 @@ export default function ProjectAccordion({
                   <div className="grid gap-5 pb-7 pl-0 sm:grid-cols-[1fr_12rem] sm:pl-14">
                     <div>
                       <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">{p.description}</p>
+
+                      {p.stack && p.stack.length > 0 && (
+                        <div className="mt-4 flex flex-wrap gap-1.5" aria-label="Technologies used">
+                          {p.stack.map((tech) => (
+                            <span
+                              key={tech}
+                              className="rounded-md border bg-background px-2 py-0.5 font-mono text-xs text-muted-foreground"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
                       {p.category && (
                         <span className="mt-4 inline-block rounded-md border px-2.5 py-1 font-mono text-xs text-muted-foreground">
                           {p.category}

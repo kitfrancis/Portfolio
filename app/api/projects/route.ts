@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   }
   try {
     const body = await request.json();
-    const { title, description, imageUrl, category } = body;
+    const { title, description, imageUrl, category, stack } = body;
 
     if (!title || !description || !imageUrl) {
       return NextResponse.json(
@@ -29,8 +29,21 @@ export async function POST(request: Request) {
       );
     }
 
+    const cleanStack = Array.isArray(stack)
+      ? stack
+          .filter((t): t is string => typeof t === "string")
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : [];
+
     const project = await prisma.project.create({
-      data: { title, description, imageUrl, category: category || "web" },
+      data: {
+        title,
+        description,
+        imageUrl,
+        category: category || "web",
+        stack: cleanStack,
+      },
     });
 
     return NextResponse.json(project, { status: 201 });
