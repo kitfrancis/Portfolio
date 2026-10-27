@@ -29,10 +29,24 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { title, description, imageUrl, category } = body;
+    const { title, description, imageUrl, category, stack } = body;
+
+    if (typeof title !== "string" || !title.trim()) {
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    }
+
     const updated = await prisma.project.update({
       where: { id },
-      data: { title, description, imageUrl, category },
+      data: {
+        title: title.trim(),
+        description,
+        imageUrl,
+        category,
+        // Only touch stack when it was actually sent
+        ...(Array.isArray(stack) && {
+          stack: stack.map((t: unknown) => String(t).trim()).filter(Boolean),
+        }),
+      },
     });
     return NextResponse.json(updated);
   } catch (error) {

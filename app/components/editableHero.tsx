@@ -51,7 +51,7 @@ const emptyExperience = {
 
 // Shared look for every input in the edit dialog
 const field =
-  "w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none transition focus-visible:ring-2 focus-visible:ring-cyan-500";
+  "w-full min-w-0 rounded-lg border bg-background px-3 py-2 text-sm outline-none transition focus-visible:ring-2 focus-visible:ring-cyan-500";
 const labelClass = "font-mono text-xs text-muted-foreground";
 const chipClass =
   "flex items-center gap-1.5 rounded-md border bg-background px-2.5 py-1 font-mono text-xs text-muted-foreground";
@@ -109,6 +109,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const projectFileRef = useRef<HTMLInputElement>(null);
+  const projectFormRef = useRef<HTMLParagraphElement>(null);
 
   const [bioText, setBioText] = useState(bio);
   const [name, setName] = useState(initialName);
@@ -129,6 +130,8 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     category: "web",
     stackText: "",
   });
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [savingProject, setSavingProject] = useState(false);
 
   const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
   const [expForm, setExpForm] = useState(emptyExperience);
@@ -291,37 +294,74 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     router.refresh();
   };
 
-  const addProject = async () => {
-    if (!newProject.title.trim()) return;
+  const resetProjectForm = () => {
+    setNewProject({ title: "", description: "", imageUrl: "", category: "web", stackText: "" });
+    setEditingProjectId(null);
+  };
+
+  const startEditProject = (p: Project) => {
+    setEditingProjectId(p.id);
+    setNewProject({
+      title: p.title,
+      description: p.description || "",
+      imageUrl: p.imageUrl || "",
+      category: p.category || "web",
+      stackText: (p.stack ?? []).join(", "),
+    });
+    // Form sits above the list, so bring it into view
+    requestAnimationFrame(() =>
+      projectFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+    );
+  };
+
+  const saveProject = async () => {
+    if (!newProject.title.trim()) {
+      toast.error("Project title is required");
+      return;
+    }
     if (!newProject.imageUrl) {
       toast.error("Please choose a project image");
       return;
     }
-    const res = await fetch("/api/projects", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: newProject.title,
-        description: newProject.description,
-        imageUrl: newProject.imageUrl,
-        category: newProject.category,
-        stack: newProject.stackText.split(",").map((t) => t.trim()).filter(Boolean),
-      }),
-    });
-    const created = await res.json().catch(() => null);
-    if (!res.ok || !created?.id) {
-      toast.error("Failed to add project");
-      return;
+    setSavingProject(true);
+    try {
+      const editing = editingProjectId;
+      const res = await fetch(editing ? `/api/projects/${editing}` : "/api/projects", {
+        method: editing ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: newProject.title,
+          description: newProject.description,
+          imageUrl: newProject.imageUrl,
+          category: newProject.category,
+          stack: newProject.stackText.split(",").map((t) => t.trim()).filter(Boolean),
+        }),
+      });
+      const saved = await res.json().catch(() => null);
+      if (!res.ok || !saved?.id) {
+        toast.error(saved?.error || "Failed to save project");
+        return;
+      }
+      setProjects((prev) =>
+        editing
+          ? prev.map((p) => (p.id === saved.id ? saved : p))
+          : [saved, ...prev.filter((p) => p.id !== saved.id)]
+      );
+      resetProjectForm();
+      toast.success(editing ? "Project updated!" : "Project added!");
+      if (editing) setOpen(false); // close the modal after saving an edit
+      router.refresh();
+    } catch {
+      toast.error("Failed to save project");
+    } finally {
+      setSavingProject(false);
     }
-    setProjects((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
-    setNewProject({ title: "", description: "", imageUrl: "", category: "web", stackText: "" });
-    toast.success("Project added!");
-    router.refresh();
   };
 
   const deleteProject = async (id: string) => {
     await fetch(`/api/projects/${id}`, { method: "DELETE" });
     setProjects((prev) => prev.filter((p) => p.id !== id));
+    if (editingProjectId === id) resetProjectForm();
     await fetchAll();
     toast.success("Project deleted!");
     router.refresh();
@@ -381,6 +421,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
       );
       resetExpForm();
       toast.success(editing ? "Experience updated!" : "Experience added!");
+      if (editing) setOpen(false); // close the modal after saving an edit
       router.refresh();
     } catch {
       toast.error("Failed to save experience");
@@ -420,22 +461,25 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
               <Pencil className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+          <DialogContent className="grid-cols-[minmax(0,1fr)] max-h-[85dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto overflow-x-clip p-4 sm:max-w-2xl sm:p-6">
             <DialogHeader>
               <DialogTitle className="font-mono text-sm">Edit portfolio</DialogTitle>
             </DialogHeader>
 
-            <Tabs defaultValue="bio">
-              <TabsList className="w-full">
-                <TabsTrigger value="bio">Bio</TabsTrigger>
-                <TabsTrigger value="image">Image</TabsTrigger>
-                <TabsTrigger value="stack">Tech stack</TabsTrigger>
-                <TabsTrigger value="projects">Projects</TabsTrigger>
-                <TabsTrigger value="experience">Experience</TabsTrigger>
-              </TabsList>
+            <Tabs defaultValue="bio" className="min-w-0">
+              {/* Tabs scroll sideways on small screens instead of widening the dialog */}
+              <div className="overflow-x-auto overscroll-x-contain pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <TabsList className="inline-flex h-auto w-max min-w-full justify-start gap-1">
+                  <TabsTrigger value="bio" className="shrink-0">Bio</TabsTrigger>
+                  <TabsTrigger value="image" className="shrink-0">Image</TabsTrigger>
+                  <TabsTrigger value="stack" className="shrink-0">Tech stack</TabsTrigger>
+                  <TabsTrigger value="projects" className="shrink-0">Projects</TabsTrigger>
+                  <TabsTrigger value="experience" className="shrink-0">Experience</TabsTrigger>
+                </TabsList>
+              </div>
 
               {/* Bio Tab */}
-              <TabsContent value="bio" className="mt-4 flex flex-col gap-3">
+              <TabsContent value="bio" className="mt-4 flex min-w-0 flex-col gap-3">
                 <label htmlFor="e-name" className={labelClass}>Name</label>
                 <input id="e-name" className={field} value={name} onChange={(e) => setName(e.target.value)} />
                 <label htmlFor="e-bio" className={labelClass}>Bio</label>
@@ -449,7 +493,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
               </TabsContent>
 
               {/* Image Tab */}
-              <TabsContent value="image" className="mt-4 flex flex-col gap-4">
+              <TabsContent value="image" className="mt-4 flex min-w-0 flex-col gap-4">
                 <div className="flex flex-col items-center gap-3">
                   <button
                     type="button"
@@ -467,7 +511,9 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                       <span className="text-xs font-medium">Change</span>
                     </span>
                   </button>
-                  <p className="font-mono text-xs text-muted-foreground">Click the photo to upload · Max 5MB · JPG, PNG, WEBP</p>
+                  <p className="text-center font-mono text-xs text-muted-foreground">
+                    Click the photo to upload · Max 5MB · JPG, PNG, WEBP
+                  </p>
                 </div>
 
                 <input
@@ -498,7 +544,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
               </TabsContent>
 
               {/* Stack Tab */}
-              <TabsContent value="stack" className="mt-4 flex flex-col gap-6">
+              <TabsContent value="stack" className="mt-4 flex min-w-0 flex-col gap-6">
                 <div>
                   <p className={`${labelClass} mb-2`}>Frontend</p>
                   <div className="mb-3 flex gap-2">
@@ -509,7 +555,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                       value={newFrontend}
                       onChange={(e) => setNewFrontend(e.target.value)}
                     />
-                    <Button onClick={addFrontend}>Add</Button>
+                    <Button onClick={addFrontend} className="shrink-0">Add</Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {frontendStacks.map((s) => (
@@ -537,7 +583,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                       value={newBackend}
                       onChange={(e) => setNewBackend(e.target.value)}
                     />
-                    <Button onClick={addBackend}>Add</Button>
+                    <Button onClick={addBackend} className="shrink-0">Add</Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {backendStacks.map((s) => (
@@ -557,8 +603,10 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
               </TabsContent>
 
               {/* Projects Tab */}
-              <TabsContent value="projects" className="mt-4 flex flex-col gap-4">
-                <p className={labelClass}>Add new project</p>
+              <TabsContent value="projects" className="mt-4 flex min-w-0 flex-col gap-4">
+                <p ref={projectFormRef} className={`${labelClass} scroll-mt-2`}>
+                  {editingProjectId ? "Edit project" : "Add new project"}
+                </p>
                 <input
                   className={field}
                   placeholder="Title"
@@ -597,7 +645,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                         </span>
                       </>
                     ) : (
-                      <span className="font-mono text-xs text-muted-foreground">
+                      <span className="px-3 text-center font-mono text-xs text-muted-foreground">
                         Click to choose an image · Max 5MB · JPG, PNG, WEBP
                       </span>
                     )}
@@ -621,32 +669,54 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                   <option value="mobile">Mobile</option>
                   <option value="other">Other</option>
                 </select>
-                <Button onClick={addProject}>Add project</Button>
+                <div className="flex gap-2">
+                  <Button onClick={saveProject} disabled={savingProject} className="flex-1">
+                    {savingProject ? "Saving..." : editingProjectId ? "Save changes" : "Add project"}
+                  </Button>
+                  {editingProjectId && (
+                    <Button variant="outline" onClick={resetProjectForm}>
+                      Cancel
+                    </Button>
+                  )}
+                </div>
 
                 <hr />
                 <p className={labelClass}>Existing projects</p>
                 <div className="flex flex-col gap-2">
                   {projects.map((p) => (
-                    <div key={p.id} className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+                    <div
+                      key={p.id}
+                      className={`flex min-w-0 items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm ${
+                        editingProjectId === p.id ? "border-cyan-500" : ""
+                      }`}
+                    >
                       <span className="min-w-0 truncate">
                         {p.title}
                         {p.stack && p.stack.length > 0 && (
                           <span className="ml-2 font-mono text-xs text-muted-foreground">{p.stack.join(", ")}</span>
                         )}
                       </span>
-                      <button
-                        onClick={() => deleteProject(p.id)}
-                        className="font-mono text-xs text-red-500 transition hover:text-red-400"
-                      >
-                        Delete
-                      </button>
+                      <span className="flex shrink-0 gap-3">
+                        <button
+                          onClick={() => startEditProject(p)}
+                          className="font-mono text-xs text-cyan-600 transition hover:text-cyan-500 dark:text-cyan-400"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteProject(p.id)}
+                          className="font-mono text-xs text-red-500 transition hover:text-red-400"
+                        >
+                          Delete
+                        </button>
+                      </span>
                     </div>
                   ))}
                 </div>
               </TabsContent>
 
               {/* Experience Tab */}
-              <TabsContent value="experience" className="mt-4 flex flex-col gap-4">
+              <TabsContent value="experience" className="mt-4 flex min-w-0 flex-col gap-4">
                 <p className={labelClass}>{editingExpId ? "Edit experience" : "Add experience"}</p>
 
                 <input
@@ -732,7 +802,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                   {experiences.map((x) => (
                     <div
                       key={x.id}
-                      className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm ${
+                      className={`flex min-w-0 items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm ${
                         editingExpId === x.id ? "border-cyan-500" : ""
                       }`}
                     >
