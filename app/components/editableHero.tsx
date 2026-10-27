@@ -421,7 +421,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
       );
       resetExpForm();
       toast.success(editing ? "Experience updated!" : "Experience added!");
-      if (editing) setOpen(false); // close the modal after saving an edit
+      if (editing) setOpen(false); 
       router.refresh();
     } catch {
       toast.error("Failed to save experience");
@@ -461,7 +461,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
               <Pencil className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="grid-cols-[minmax(0,1fr)] max-h-[85dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto overflow-x-clip p-4 sm:max-w-2xl sm:p-6">
+          <DialogContent className="grid-cols-[minmax(0,1fr)] max-h-[85dvh] w-[calc(100%-2rem)] max-w-md overflow-y-auto overflow-x-clip p-4 lg:max-w-lg sm:p-6">
             <DialogHeader>
               <DialogTitle className="font-mono text-sm">Edit portfolio</DialogTitle>
             </DialogHeader>
@@ -523,20 +523,6 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
                   className="hidden"
                   onChange={handleFileChange}
                 />
-
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="e-url" className={labelClass}>Or paste an image URL</label>
-                  <input
-                    id="e-url"
-                    className={field}
-                    placeholder="https://..."
-                    value={imageUrl.startsWith("data:") ? "" : imageUrl}
-                    onChange={(e) => {
-                      setImageUrl(e.target.value);
-                      setImagePreview(e.target.value);
-                    }}
-                  />
-                </div>
 
                 <Button onClick={saveImage} disabled={uploading}>
                   {uploading ? "Saving..." : "Save profile picture"}
