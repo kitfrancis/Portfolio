@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import prisma from "@/lib/db";
+import { sortExperience } from "@/lib/SortExperience";
 import LoginPopover from "./components/LoginPopover";
 import EditableHero from "./components/editableHero";
 import ScrollExtras from "./components/ScrollExtras";
@@ -42,7 +43,7 @@ const EDUCATION: Education[] = [
     address: "University of Antique Main Campus, Sibalom, Antique",
     description:
       "Focusing on full-stack web development, software architectural patterns, and capstone research. Leading development on thesis management systems and campus event portals.",
- 
+
     expandLabel: "View Key University Subjects & Tech",
     expandItems: [
       "Full-stack web development",
@@ -117,6 +118,7 @@ export default async function Home() {
   ]);
 
   const profilepic = bio[0];
+  const sortedExperience = sortExperience(experience);
   const groups = [
     { title: "Frontend", items: frontendStacks },
     { title: "Backend & database", items: backendStacks },
@@ -186,73 +188,73 @@ export default async function Home() {
               Products I&apos;ve designed and built, from thesis systems to campus portals.
             </p>
 
-            {experience.length > 0 ? (
-            <ol className="relative space-y-10">
-              <span aria-hidden className="absolute bottom-0 left-[13px] top-2 w-px bg-border" />
-              {experience.map((e) => (
-                <li key={e.id} className="relative pl-11">
-                  <span
-                    aria-hidden
-                    className={`absolute left-[7px] top-2 h-3.5 w-3.5 rounded-full border-2 bg-background ${
-                      e.current ? "border-emerald-400" : "border-border"
-                    }`}
-                  />
+            {sortedExperience.length > 0 ? (
+              <ol className="relative space-y-10">
+                <span aria-hidden className="absolute bottom-0 left-[13px] top-2 w-px bg-border" />
+                {sortedExperience.map((e) => (
+                  <li key={e.id} className="relative pl-11">
+                    <span
+                      aria-hidden
+                      className={`absolute left-[7px] top-2 h-3.5 w-3.5 rounded-full border-2 bg-background ${
+                        e.current ? "border-emerald-400" : "border-border"
+                      }`}
+                    />
 
-                  <article>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className={`inline-block rounded border px-2 py-0.5 font-mono text-[11px] ${typeClass(e.type)}`}>
-                        {e.type}
-                      </span>
-                      {e.current && (
-                        <span className="inline-block rounded border border-emerald-500/30 px-2 py-0.5 font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
-                          Ongoing
+                    <article>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={`inline-block rounded border px-2 py-0.5 font-mono text-[11px] ${typeClass(e.type)}`}>
+                          {e.type}
                         </span>
-                      )}
-                    </div>
-
-                    <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-                      <div>
-                        <h3 className="text-lg font-bold leading-snug sm:text-xl">{e.title}</h3>
-                        <p className="mt-1 font-mono text-xs text-muted-foreground">{e.org}</p>
+                        {e.current && (
+                          <span className="inline-block rounded border border-emerald-500/30 px-2 py-0.5 font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+                            Ongoing
+                          </span>
+                        )}
                       </div>
-                      <span className="shrink-0 font-mono text-xs text-muted-foreground sm:text-right">
-                        {e.years}
-                      </span>
-                    </div>
 
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{e.summary}</p>
-
-                    {e.highlights.length > 0 && (
-                    <details className="group mt-4">
-                      <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs text-muted-foreground transition hover:text-foreground [&::-webkit-details-marker]:hidden">
-                        <span className="transition group-open:rotate-90">›</span>
-                        What I did
-                      </summary>
-                      <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-                        {e.highlights.map((h) => (
-                          <li key={h} className="flex gap-2">
-                            <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-emerald-400" />
-                            <span>{h}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
-                    )}
-
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {e.stack.map((t) => (
-                        <span
-                          key={t}
-                          className="rounded-md border px-2.5 py-1 font-mono text-xs text-muted-foreground transition hover:border-cyan-500 hover:text-cyan-600 dark:hover:text-cyan-400"
-                        >
-                          {t}
+                      <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                        <div>
+                          <h3 className="text-lg font-bold leading-snug sm:text-xl">{e.title}</h3>
+                          <p className="mt-1 font-mono text-xs text-muted-foreground">{e.org}</p>
+                        </div>
+                        <span className="shrink-0 font-mono text-xs text-muted-foreground sm:text-right">
+                          {e.years}
                         </span>
-                      ))}
-                    </div>
-                  </article>
-                </li>
-              ))}
-            </ol>
+                      </div>
+
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{e.summary}</p>
+
+                      {e.highlights.length > 0 && (
+                        <details className="group mt-4">
+                          <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs text-muted-foreground transition hover:text-foreground [&::-webkit-details-marker]:hidden">
+                            <span className="transition group-open:rotate-90">›</span>
+                            What I did
+                          </summary>
+                          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                            {e.highlights.map((h) => (
+                              <li key={h} className="flex gap-2">
+                                <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-emerald-400" />
+                                <span>{h}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </details>
+                      )}
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {e.stack.map((t) => (
+                          <span
+                            key={t}
+                            className="rounded-md border px-2.5 py-1 font-mono text-xs text-muted-foreground transition hover:border-cyan-500 hover:text-cyan-600 dark:hover:text-cyan-400"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </article>
+                  </li>
+                ))}
+              </ol>
             ) : (
               <div className="rounded-xl border border-dashed p-8 text-center">
                 <h3 className="font-semibold">No experience yet</h3>

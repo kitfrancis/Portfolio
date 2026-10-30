@@ -92,7 +92,7 @@ export default function AdminStats() {
               <p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
                 Daily views (30 days)
               </p>
-              <div className="flex items-end gap-[2px] rounded-lg border bg-background/50 p-3" style={{ height: 80 }}>
+              <div className="flex items-end gap-0.5 rounded-lg border bg-background/50 p-3" style={{ height: 80 }}>
                 {stats.daily.map((d) => (
                   <div
                     key={d.date}

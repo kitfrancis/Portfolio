@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "@/lib/auth-client";
+import { sortExperience } from "@/lib/SortExperience";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -159,7 +160,7 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
     setFrontendStacks(cleanList<Stack>(fe));
     setBackendStacks(cleanList<Stack>(be));
     setProjects(cleanList<Project>(proj));
-    setExperiences(cleanList<ExperienceItem>(exp));
+    setExperiences(sortExperience(cleanList<ExperienceItem>(exp)));
     if (bioData && !bioData.error) {
       setBioText(bioData.bio || "");
       setName(bioData.name || "");
@@ -415,13 +416,15 @@ export default function EditableHero({ bio, name: initialName }: { bio: string; 
         return;
       }
       setExperiences((prev) =>
-        editing
-          ? prev.map((x) => (x.id === saved.id ? saved : x))
-          : [saved, ...prev.filter((x) => x.id !== saved.id)]
+        sortExperience(
+          editing
+            ? prev.map((x) => (x.id === saved.id ? saved : x))
+            : [saved, ...prev.filter((x) => x.id !== saved.id)]
+        )
       );
       resetExpForm();
       toast.success(editing ? "Experience updated!" : "Experience added!");
-      if (editing) setOpen(false); 
+      if (editing) setOpen(false);
       router.refresh();
     } catch {
       toast.error("Failed to save experience");
