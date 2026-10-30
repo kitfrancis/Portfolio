@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Copy, Check, ArrowUpRight } from "lucide-react";
 
 // TODO: replace with your real profile URLs
-const EMAIL = "kitfrancis08@gmail.com";
+const EMAIL = "kfsbesa@antiquespride.edu.ph";
 const SOCIALS = [
   { label: "GitHub", handle: "@kitfrancis", href: "https://github.com/kitfrancis" },
   { label: "LinkedIn", handle: "kitfrancis-besa", href: "https://www.linkedin.com/in/kitfrancis-besa-263a963b8" },
