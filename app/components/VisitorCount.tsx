@@ -39,4 +39,4 @@ export default function VisitorCount() {
       <span className="text-muted-foreground">today</span>
     </div>
   );
-}
+} 
