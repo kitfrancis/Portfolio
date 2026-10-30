@@ -5,6 +5,7 @@ import Navbar from "./components/navbar";
 import { ThemeToggle } from "@/components/ui/theme-provider";
 import ThemeProviderWrapper from "@/components/ui/ThemeProviderWrapper";
 import { Toaster } from "@/components/ui/sonner";
+import ViewTracker from "./components/ViewTracker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default function RootLayout({
           <Navbar />
           <div>{children}</div>
           <Toaster />
+          <ViewTracker />
         </ThemeProviderWrapper>
       </body>
     </html>

@@ -86,3 +86,13 @@ export type Bio = Prisma.BioModel
  * 
  */
 export type Experience = Prisma.ExperienceModel
+/**
+ * Model PageView
+ * 
+ */
+export type PageView = Prisma.PageViewModel
+/**
+ * Model Visitor
+ * 
+ */
+export type Visitor = Prisma.VisitorModel

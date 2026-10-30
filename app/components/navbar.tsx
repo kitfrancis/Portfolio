@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Command } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-provider";
-
+import VisitorCount from "./VisitorCount";
 const links = [
   { name: "About me", href: "/" },
   { name: "Projects", href: "/projects" },
@@ -137,7 +137,7 @@ export default function Navbar() {
   return (
     <>
       {/* Scroll progress */}
-      <div aria-hidden className="fixed left-0 top-0 z-[60] h-0.5 bg-cyan-500" style={{ width: `${progress}%` }} />
+      <div aria-hidden className="fixed left-0 top-0 z-60 h-0.5 bg-cyan-500" style={{ width: `${progress}%` }} />
 
       {/* Desktop sidebar */}
       <nav aria-label="Main" className="fixed left-0 top-0 z-50 hidden h-full w-64 flex-col border-r bg-background lg:flex">
@@ -154,11 +154,14 @@ export default function Navbar() {
           <div className="mt-6">{paletteButton}</div>
 
           <div className="mt-auto pt-8 font-mono text-xs leading-relaxed text-muted-foreground">
-            <div>
-              <span className="text-foreground">{time || "--:--"}</span> PHT
-            </div>
-            <div>University of Antique</div>
-          </div>
+  <div className="mb-3">
+    <VisitorCount />
+  </div>
+  <div>
+    <span className="text-foreground">{time || "--:--"}</span> PHT
+  </div>
+  <div>University of Antique</div>
+</div>
         </div>
       </nav>
 
@@ -199,15 +202,18 @@ export default function Navbar() {
           }`}
         >
           <div className="overflow-hidden">
-            <div className="flex flex-col gap-1 px-4 pb-4 pt-1">{navLinks}</div>
-          </div>
+  <div className="flex flex-col gap-1 px-4 pb-4 pt-1">{navLinks}</div>
+  <div className="border-t px-4 py-3">
+    <VisitorCount />
+  </div>
+</div>
         </div>
       </nav>
 
       {/* Command menu */}
       {paletteOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-start justify-center bg-black/55 p-4 pt-[12vh] backdrop-blur-sm"
+          className="fixed inset-0 z-100 flex items-start justify-center bg-black/55 p-4 pt-[12vh] backdrop-blur-sm"
           onClick={() => setPaletteOpen(false)}
         >
           <div

@@ -120,3 +120,24 @@ model Experience {
 
   @@map("experience")
 }
+
+model PageView {
+  id        String   @id @default(uuid())
+  path      String
+  visitedAt DateTime @default(now())
+
+  @@index([path])
+  @@index([visitedAt])
+  @@map("page_view")
+}
+
+
+model Visitor {
+  id        String   @id 
+  firstSeen DateTime @default(now())
+  lastSeen  DateTime @default(now())
+
+  @@index([firstSeen])
+  @@index([lastSeen])
+  @@map("visitor")
+}
