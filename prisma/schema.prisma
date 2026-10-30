@@ -132,12 +132,12 @@ model PageView {
 }
 
 
-model Visitor {
-  id        String   @id 
-  firstSeen DateTime @default(now())
-  lastSeen  DateTime @default(now())
+model VisitorDay {
+  visitorId String
+  day       String  
+  createdAt DateTime @default(now())
 
-  @@index([firstSeen])
-  @@index([lastSeen])
-  @@map("visitor")
+  @@id([visitorId, day])
+  @@index([day])
+  @@map("visitor_day")
 }

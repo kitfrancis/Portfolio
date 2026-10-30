@@ -14,17 +14,14 @@ export async function GET() {
   }
 
   try {
-    const local = new Date(Date.now() + TZ);
-    const startOfToday = new Date(
-      Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate()) - TZ
-    );
+    const today = new Date(Date.now() + TZ).toISOString().slice(0, 10);
 
-    const [total, today] = await Promise.all([
-      prisma.visitor.count(),
-      prisma.visitor.count({ where: { lastSeen: { gte: startOfToday } } }),
+    const [total, todayCount] = await Promise.all([
+      prisma.visitorDay.count(),
+      prisma.visitorDay.count({ where: { day: today } }),
     ]);
 
-    return NextResponse.json({ total, today });
+    return NextResponse.json({ total, today: todayCount });
   } catch (error) {
     console.error("Failed to fetch visitor count:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

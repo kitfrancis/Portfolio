@@ -394,7 +394,7 @@ export const ModelName = {
   Bio: 'Bio',
   Experience: 'Experience',
   PageView: 'PageView',
-  Visitor: 'Visitor'
+  VisitorDay: 'VisitorDay'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -410,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "project" | "frontendStack" | "backendStack" | "bio" | "experience" | "pageView" | "visitor"
+    modelProps: "user" | "session" | "account" | "verification" | "project" | "frontendStack" | "backendStack" | "bio" | "experience" | "pageView" | "visitorDay"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1154,77 +1154,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Visitor: {
-      payload: Prisma.$VisitorPayload<ExtArgs>
-      fields: Prisma.VisitorFieldRefs
+    VisitorDay: {
+      payload: Prisma.$VisitorDayPayload<ExtArgs>
+      fields: Prisma.VisitorDayFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.VisitorFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload> | null
+          args: Prisma.VisitorDayFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.VisitorFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+          args: Prisma.VisitorDayFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload>
         }
         findFirst: {
-          args: Prisma.VisitorFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload> | null
+          args: Prisma.VisitorDayFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.VisitorFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+          args: Prisma.VisitorDayFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload>
         }
         findMany: {
-          args: Prisma.VisitorFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>[]
+          args: Prisma.VisitorDayFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload>[]
         }
         create: {
-          args: Prisma.VisitorCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+          args: Prisma.VisitorDayCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload>
         }
         createMany: {
-          args: Prisma.VisitorCreateManyArgs<ExtArgs>
+          args: Prisma.VisitorDayCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.VisitorCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>[]
+          args: Prisma.VisitorDayCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload>[]
         }
         delete: {
-          args: Prisma.VisitorDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+          args: Prisma.VisitorDayDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload>
         }
         update: {
-          args: Prisma.VisitorUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+          args: Prisma.VisitorDayUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload>
         }
         deleteMany: {
-          args: Prisma.VisitorDeleteManyArgs<ExtArgs>
+          args: Prisma.VisitorDayDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.VisitorUpdateManyArgs<ExtArgs>
+          args: Prisma.VisitorDayUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.VisitorUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>[]
+          args: Prisma.VisitorDayUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload>[]
         }
         upsert: {
-          args: Prisma.VisitorUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+          args: Prisma.VisitorDayUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorDayPayload>
         }
         aggregate: {
-          args: Prisma.VisitorAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateVisitor>
+          args: Prisma.VisitorDayAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateVisitorDay>
         }
         groupBy: {
-          args: Prisma.VisitorGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.VisitorGroupByOutputType>[]
+          args: Prisma.VisitorDayGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VisitorDayGroupByOutputType>[]
         }
         count: {
-          args: Prisma.VisitorCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.VisitorCountAggregateOutputType> | number
+          args: Prisma.VisitorDayCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VisitorDayCountAggregateOutputType> | number
         }
       }
     }
@@ -1397,13 +1397,13 @@ export const PageViewScalarFieldEnum = {
 export type PageViewScalarFieldEnum = (typeof PageViewScalarFieldEnum)[keyof typeof PageViewScalarFieldEnum]
 
 
-export const VisitorScalarFieldEnum = {
-  id: 'id',
-  firstSeen: 'firstSeen',
-  lastSeen: 'lastSeen'
+export const VisitorDayScalarFieldEnum = {
+  visitorId: 'visitorId',
+  day: 'day',
+  createdAt: 'createdAt'
 } as const
 
-export type VisitorScalarFieldEnum = (typeof VisitorScalarFieldEnum)[keyof typeof VisitorScalarFieldEnum]
+export type VisitorDayScalarFieldEnum = (typeof VisitorDayScalarFieldEnum)[keyof typeof VisitorDayScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1589,7 +1589,7 @@ export type GlobalOmitConfig = {
   bio?: Prisma.BioOmit
   experience?: Prisma.ExperienceOmit
   pageView?: Prisma.PageViewOmit
-  visitor?: Prisma.VisitorOmit
+  visitorDay?: Prisma.VisitorDayOmit
 }
 
 /* Types for Logging */

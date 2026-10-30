@@ -61,7 +61,7 @@ export const ModelName = {
   Bio: 'Bio',
   Experience: 'Experience',
   PageView: 'PageView',
-  Visitor: 'Visitor'
+  VisitorDay: 'VisitorDay'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -210,13 +210,13 @@ export const PageViewScalarFieldEnum = {
 export type PageViewScalarFieldEnum = (typeof PageViewScalarFieldEnum)[keyof typeof PageViewScalarFieldEnum]
 
 
-export const VisitorScalarFieldEnum = {
-  id: 'id',
-  firstSeen: 'firstSeen',
-  lastSeen: 'lastSeen'
+export const VisitorDayScalarFieldEnum = {
+  visitorId: 'visitorId',
+  day: 'day',
+  createdAt: 'createdAt'
 } as const
 
-export type VisitorScalarFieldEnum = (typeof VisitorScalarFieldEnum)[keyof typeof VisitorScalarFieldEnum]
+export type VisitorDayScalarFieldEnum = (typeof VisitorDayScalarFieldEnum)[keyof typeof VisitorDayScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -68,7 +68,7 @@ export type Experience = Prisma.ExperienceModel
  */
 export type PageView = Prisma.PageViewModel
 /**
- * Model Visitor
+ * Model VisitorDay
  * 
  */
-export type Visitor = Prisma.VisitorModel
+export type VisitorDay = Prisma.VisitorDayModel
